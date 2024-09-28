@@ -253,13 +253,20 @@
         drawingShip = 0;
     }, false);
 
+    function sleep(milliseconds) {
+        const date = Date.now();
+        let currentDate = Date.now();
+        while (currentDate - date < milliseconds) {
+            currentDate = Date.now();
+        }
+    }
+
     let socket;
     window.onload = function () {
         socket = new WebSocket("ws://" + location.host + "/lobby/games");
 
         socket.onmessage = function (m) {
             const cmd = JSON.parse(m.data);
-            console.log(cmd);
 
             if (Array.isArray(cmd)) {
                 // Я буду удалять сейчас все игры!
@@ -286,6 +293,13 @@
                 if (cmd.status === 'WAITING') {
                     addRowToTable('gamesTable', true, cmd.id, cmd.createTime, cmd.players, cmd.status)
                 }
+            }
+        };
+
+        socket.onclose = function() {
+            while(socket !== WebSocket.OPEN) {
+                sleep(5000);
+                socket = new WebSocket("ws://" + location.host + "/lobby/games");
             }
         };
 

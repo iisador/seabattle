@@ -30,35 +30,35 @@ body {
 }
 
 .btnReset {
-    background: url('/img/Icon%20Pack%20Black.svg') -700px -416px / 800px 800px no-repeat;
+    background: url('/img/icon_sprite.svg') -700px -416px / 800px 800px no-repeat;
     width: 30px;
     height: 30px;
     cursor: pointer;
 }
 
 .btnRandom {
-    background: url('/img/Icon%20Pack%20Black.svg') -559px -252px / 800px 800px no-repeat;
+    background: url('/img/icon_sprite.svg') -559px -252px / 800px 800px no-repeat;
     width: 30px;
     height: 30px;
     cursor: pointer;
 }
 
 .btnJoin {
-    background: url('/img/Icon%20Pack%20Black.svg') -424px -125px / 800px 800px no-repeat;
+    background: url('/img/icon_sprite.svg') -424px -125px / 800px 800px no-repeat;
     width: 30px;
     height: 30px;
     cursor: pointer;
 }
 
 .btnView {
-    background: url('/img/Icon%20Pack%20Black.svg') -602px -490px / 800px 800px no-repeat;
+    background: url('/img/icon_sprite.svg') -602px -490px / 800px 800px no-repeat;
     width: 33px;
     height: 27px;
     cursor: pointer;
 }
 
 .btnChat {
-    background: url('/img/Icon%20Pack%20Black.svg') -700px -253px / 800px 800px no-repeat;
+    background: url('/img/icon_sprite.svg') -700px -253px / 800px 800px no-repeat;
     width: 30px;
     height: 30px;
     cursor: pointer;

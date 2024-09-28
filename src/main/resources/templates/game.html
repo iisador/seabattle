@@ -44,14 +44,6 @@
         sendCommand('JOINED_GAME', { playerName: whoami() });
     }
 
-    function sleep(milliseconds) {
-        const date = Date.now();
-        let currentDate = Date.now();
-        while (currentDate - date < milliseconds) {
-            currentDate = Date.now();
-        }
-    }
-
     function setTurn(turn, size = 'xx-large') {
         const turnSpan = document.getElementById('turnSpan');
         turnSpan.innerText = turn;
@@ -240,11 +232,6 @@
         url = url + '?field={myShips}&playerName=' + whoami();
 
         socket = new WebSocket(url);
-
-        socket.onopen = function () {
-            sleep(100);
-            cmdJoined();
-        };
 
         socket.onmessage = function (m) {
             console.log(m);
