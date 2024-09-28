@@ -1,6 +1,11 @@
 <!--
     Я не люблю жс. Я слишком стар для этого дерьма.
-    Если кто-то заглянет в код знайте, я был бух когда писал эти страницы.
+    Ну, не знаю, не перевариваю я динамическую типизацию.
+    Меня дедушка не так воспитал. Мне нравится когда все типы определены.
+    Ну да ладно.
+
+    Игра была создана только благодаря тому, что я могу быстро дойти до пика Балмера.
+    Если Вы фанат чистокода - не смотрите дальше.
     Да простит меня дядюшка Боб.
 -->
 <html>
@@ -261,10 +266,8 @@
         }
     }
 
-    let socket;
-    window.onload = function () {
-        socket = new WebSocket("ws://" + location.host + "/lobby/games");
-
+    function connect() {
+        let socket = new WebSocket("ws://" + location.host + "/lobby/games");
         socket.onmessage = function (m) {
             const cmd = JSON.parse(m.data);
 
@@ -287,7 +290,7 @@
                 if (cmd.status === 'PLAYING') {
                     modifyRow(cmd.id, cmd.createTime, cmd.players, cmd.status);
                 }
-                if(cmd.status === 'FINISHED' || cmd.status === 'FAILED') {
+                if (cmd.status === 'FINISHED' || cmd.status === 'FAILED') {
                     removeRow(cmd.id);
                 }
                 if (cmd.status === 'WAITING') {
@@ -296,12 +299,19 @@
             }
         };
 
-        socket.onclose = function() {
-            while(socket !== WebSocket.OPEN) {
-                sleep(5000);
-                socket = new WebSocket("ws://" + location.host + "/lobby/games");
-            }
+        socket.onerror = function () {
+            socket.close();
         };
+
+        socket.onclose = function () {
+            setTimeout(function () {
+                connect();
+            }, 2000);
+        };
+    }
+
+    window.onload = function () {
+        connect();
 
         // Установка настроек игры по умолчанию
         const sGameConf = document.getElementById('gameConf');
