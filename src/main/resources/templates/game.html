@@ -1,0 +1,372 @@
+<html>
+<head>
+    <meta charset="UTF-8">
+    <link href="/fonts/fonts.css" rel="stylesheet">
+    <link href="/css/common.css" rel="stylesheet">
+    <link href="/css/game.css" rel="stylesheet">
+    <link href="/css/field.css" rel="stylesheet">
+    <script src="/js/field.js"></script>
+
+    <title>{msg:game_title}</title>
+</head>
+<script>
+    const myShips = JSON.parse('{myShips}');
+    let blockSize = '33px';
+    let myFieldBlocks = new Field(myShips.length, blockSize, 'my', false);
+    let enemyFieldBlocks = new Field(myShips.length, blockSize, 'en');
+    let currentTurn;
+    let enemyName;
+    let isGameFinished;
+
+    function clickListener(e) {
+        if (whoami() === currentTurn && enemyFieldBlocks.isFieldBlock(e.target)) {
+            const block = enemyFieldBlocks.getBlock(e.target);
+            fire(block.getX(), block.getY());
+        }
+    }
+
+    function whoami() {
+        return '{playerName}';
+    }
+
+    function sendCommand(type, payload) {
+        const command = { };
+        command.type = type;
+        if (payload) {
+            Object.keys(payload).forEach(function (key) {
+                command[key] = payload[key];
+            });
+        }
+        socket.send(JSON.stringify(command));
+    }
+
+    function cmdJoined() {
+        sendCommand('JOINED_GAME', { playerName: whoami() });
+    }
+
+    function sleep(milliseconds) {
+        const date = Date.now();
+        let currentDate = Date.now();
+        while (currentDate - date < milliseconds) {
+            currentDate = Date.now();
+        }
+    }
+
+    function setTurn(turn, size = 'xx-large') {
+        const turnSpan = document.getElementById('turnSpan');
+        turnSpan.innerText = turn;
+        turnSpan.style.fontSize = size;
+    }
+
+    function chatMessage(playerName, m) {
+        const chatLog = document.getElementById('chatLog');
+        chatLog.value += '\n' + playerName + '> ' + m;
+        chatLog.scrollTop = chatLog.scrollHeight;
+    }
+
+    function sendToChat() {
+        const message = document.getElementById('chatInput').value;
+        if(message) {
+            sendCommand('CHAT_MESSAGE', { message: message });
+            document.getElementById('chatInput').value = null;
+        }
+    }
+
+    function playerJoined(playerName, ships) {
+        chatMessage(playerName, 'Присоединился');
+        drawStats(document.getElementById('myStats'), ships, 'ship');
+        drawStats(document.getElementById('enemyStats'), ships, 'enemyShip');
+    }
+
+    function updateTitle(str) {
+        const titleSpan = document.getElementById('titleSpan');
+        titleSpan.innerText = str;
+    }
+
+    function gameStarted(turn, player1, player2) {
+        chatMessage('', 'Игра началась!');
+        chatMessage('', 'Ход за ' + turn + '\n');
+        currentTurn = turn;
+        setTurn('Ход: ' + currentTurn);
+        if (whoami() === player1) {
+            document.getElementById('enemyTitleSpan').innerText = player2;
+            updateTitle('БИТВА ' + whoami() + ' vs ' + player2);
+        } else {
+            document.getElementById('enemyTitleSpan').innerText = player1;
+            updateTitle('БИТВА ' + whoami() + ' vs ' + player1);
+        }
+
+        document.addEventListener('click', clickListener);
+    }
+
+    function gameFinished(winner, opponentField, matrix) {
+        if (whoami() === winner) {
+            chatMessage('', 'ПОЗДРАВЛЯМБА, ' + winner + ' ПОБЕЖДАЕТ!!!');
+            setTurn('ПОБЕДА!!! УРА!!!', 'xxx-large');
+            document.getElementById('leave').innerText = 'Победно вернуться в лобби';
+        } else {
+            chatMessage('', 'ЭХ, ' + whoami() + ', В СЛЕДУЮЩИЙ РАЗ ПОВЕЗЕТ!');
+            setTurn('ЭХ, НЕ СУДЬБА, ПОБЕДА ЗА ' + winner, 'xxx-large');
+            document.getElementById('leave').innerText = 'Приковылять обратно в лобби';
+
+            enemyFieldBlocks = new Field(myShips.length, '33px', 'en');
+            enemyFieldBlocks.drawField(document.getElementById('enemyField'));
+            enemyFieldBlocks.drawShips(JSON.parse(opponentField), 'enemyShip');
+            enemyFieldBlocks.layoutBattlefield(matrix);
+        }
+
+        isGameFinished = true;
+        document.removeEventListener('click', clickListener);
+    }
+
+    function playerLeaved(leavedPlayer) {
+        chatMessage('', leavedPlayer + ' БЕЖАЛ ПОДЖАВ ХВОСТ! ' + whoami() + ' ПОБЕЖДАЕТ!!!');
+        // setTurn('ПОБЕДА!!! ' + leavedPlayer + ' БЕЖАЛ С ПОЛЯ БОЯ ПОДЖАВ ХВОСТ!', 'xxx-large');
+        document.removeEventListener('click', clickListener);
+    }
+
+    function leaveGame() {
+        window.location.replace('/lobby/');
+    }
+
+    function drawStats(div, stats, shipClass) {
+        const statsTitle = (shipClass === 'ship') ? document.getElementById('myStatsTitleSpan'): document.getElementById('enemyStatsTitleSpan');
+        statsTitle.innerText = (shipClass === 'ship') ? 'НАШ ФЛОТ': 'А ЭТО ИХ';
+
+        for (let i = 0; i < div.children.length; i++) {
+            div.removeChild(div.children[i]);
+        }
+
+        const maxShip = getMaxShip(stats);
+        div.style.display = 'grid';
+        div.style.gridTemplateColumns = 'repeat(' + (maxShip + 1) + ', ' + blockSize + ')';
+        div.style.gridTemplateRows = 'repeat(' + Object.keys(stats).length + ', ' + blockSize + ')';
+        div.style.gap = '2px';
+
+        for (let i = 0; i < 10; i++) {
+            if (typeof stats[i] !== 'undefined') {
+                const ship = document.createElement('div');
+                ship.className = shipClass;
+                ship.style.gridColumnStart = '1';
+                ship.style.gridColumnEnd = '' + (i + 1);
+                ship.style.gridRow = '' + i;
+                div.appendChild(ship);
+
+                const count = document.createElement('div');
+                count.style.gridColumn = '' + (maxShip + 1);
+                count.style.gridRow = '' + i;
+                count.style.display = 'flex';
+                count.style.justifyContent = 'space-around';
+                count.style.alignItems = 'center';
+                count.innerText = '' + stats[i];
+                div.appendChild(count);
+            }
+        }
+    }
+
+    function getMaxShip(stats) {
+        let max = 1;
+        Object.keys(stats).forEach(k => {
+            if (k > max) {
+                max = parseInt(k);
+            }
+        });
+        return max;
+    }
+
+    function fire(x, y) {
+        chatMessage(whoami(), myFieldBlocks.getLetter(x + 1).toUpperCase() + ':' + (y + 1));
+        sendCommand('FIRE', { x: x, y: y, playerName: whoami() });
+    }
+
+    function fireResult(attacker, opponent, x, y, result, matrix, stats) {
+        if (attacker === whoami()) {
+            enemyFieldBlocks = new Field(myShips.length, '33px', 'en');
+            enemyFieldBlocks.drawField(document.getElementById('enemyField'));
+            enemyFieldBlocks.drawBattlefield(matrix);
+            drawStats(document.getElementById('enemyStats'), stats, 'enemyShip');
+            switch (result) {
+                case 'MISSED':
+                    chatMessage(opponent, 'Мимо!');
+                    chatMessage('', 'ХОД ПЕРЕХОДИТ К ' + opponent + '\n');
+                    currentTurn = opponent;
+                    setTurn('Ход: ' + currentTurn);
+                    myFieldBlocks.setInactive(false);
+                    enemyFieldBlocks.setInactive(true);
+                    break;
+                case 'WOUNDED':
+                    chatMessage(opponent, 'Ранил');
+                    chatMessage('', attacker + ' продолжает' + '\n');
+                    break;
+                case 'KILLED':
+                    chatMessage(opponent, 'Убил');
+                    chatMessage('', attacker + ' продолжает' + '\n');
+                    break;
+            }
+        } else {
+            myFieldBlocks = new Field(myShips.length, '33px', 'my', false);
+            myFieldBlocks.drawField(document.getElementById('myField'));
+            myFieldBlocks.drawShips(myShips);
+            myFieldBlocks.layoutBattlefield(matrix);
+            drawStats(document.getElementById('myStats'), stats, 'ship');
+            switch (result) {
+                case 'MISSED':
+                    chatMessage(opponent, 'Мимо!');
+                    chatMessage('', 'ХОД ПЕРЕХОДИТ К ' + opponent + '\n');
+                    currentTurn = opponent;
+                    setTurn('Ход: ' + currentTurn);
+                    myFieldBlocks.setInactive(true);
+                    enemyFieldBlocks.setInactive(false);
+                    break;
+                case 'WOUNDED':
+                    chatMessage(opponent, 'Ранил');
+                    chatMessage('', attacker + ' продолжает' + '\n');
+                    break;
+                case 'KILLED':
+                    chatMessage(opponent, 'Убил');
+                    chatMessage('', attacker + ' продолжает' + '\n');
+                    break;
+            }
+        }
+    }
+
+    let socket;
+    window.onload = function () {
+        myFieldBlocks.drawField(document.getElementById('myField'));
+        myFieldBlocks.drawShips(myShips);
+        enemyFieldBlocks.drawField(document.getElementById('enemyField'));
+
+        let url = 'ws://' + location.host + '/game/{gameId}';
+        url = url + '?field={myShips}&playerName=' + whoami();
+
+        socket = new WebSocket(url);
+
+        socket.onopen = function () {
+            sleep(100);
+            cmdJoined();
+        };
+
+        socket.onmessage = function (m) {
+            console.log(m);
+            const cmd = JSON.parse(m.data);
+
+            switch (cmd.type) {
+                case 'ERROR':
+                    failWithError(cmd.error);
+                    break
+                case 'PLAYER_JOINED':
+                    playerJoined(cmd.playerName, cmd.aliveShips);
+                    break;
+                case 'FIRE_RESULT':
+                    fireResult(cmd.attacker, cmd.opponent, cmd.x, cmd.y, cmd.result, cmd.matrix, cmd.aliveShips);
+                    break;
+                case 'START_GAME':
+                    gameStarted(cmd.turn, cmd.player1, cmd.player2);
+                    break;
+                case 'GAME_FINISHED':
+                    if (cmd.winner === cmd.player1.name) {
+                        gameFinished(cmd.winner, cmd.player1.field, cmd.player1.matrix);
+                    } else {
+                        gameFinished(cmd.winner, cmd.player2.field, cmd.player2.matrix);
+                    }
+                    break;
+                case 'CHAT_MESSAGE':
+                    chatMessage(cmd.playerName, cmd.message);
+                    break;
+                case 'PLAYER_LEAVED':
+                    if (!isGameFinished) {
+                        playerLeaved(cmd.playerName);
+                    }
+                    break;
+                case 'VIEWER_JOINED':
+                    chatMessage(cmd.viewerName, 'Присоединился посмотреть');
+                    break;
+            }
+        };
+
+        socket.onclose = function () {
+            if (!isGameFinished) {
+                failWithError();
+            }
+        }
+    };
+
+    function failWithError(error = 'Возникли непредвиденные технические чоколадки') {
+        document.removeEventListener('click', clickListener);
+        document.getElementById('gameWrapper').style.filter = 'grayscale(1)';
+        document.getElementById('errModal').style.visibility = 'visible';
+        document.getElementById('errorText').innerText = error;
+    }
+
+    document.addEventListener('keypress', function (e) {
+        if (e.code === 'Enter') {
+            document.getElementById('btnSend').click();
+        }
+    });
+</script>
+<body>
+<div id="lobbyWrapper">
+    <div id="headerWrapper">
+        <div id="logo">
+            <img style="width: 120px;height: auto;" src="/img/logo_ca.svg">
+        </div>
+    </div>
+    <div id="logoCr">
+        <img style="width: 120px;height: auto;" src="/img/logo_cr.svg">
+    </div>
+    <div id="leftWrapper"></div>
+    <div id="centerWrapper">
+        <div id="gameWrapper">
+            <div id="title">
+                <span id="titleSpan" class="bigTitle">Ожидание игрока</span>
+            </div>
+            <div id="turn">
+                <span id="turnSpan" class="midTitle"></span>
+            </div>
+            <div id="myFieldTitle">
+                <span id="myTitleSpan" class="midTitle">{playerName}</span>
+            </div>
+            <div id="myField"></div>
+
+            <div id="enemyFieldTitle">
+                <span id="enemyTitleSpan" class="midTitle"></span>
+            </div>
+            <div id="enemyField"></div>
+
+            <div id="myStatsTitle">
+                <span id="myStatsTitleSpan" class="midTitle"></span>
+            </div>
+            <div id="enemyStatsTitle">
+                <span id="enemyStatsTitleSpan" class="midTitle"></span>
+            </div>
+
+            <div id="myStatsWrapper">
+                <div id="myStats"></div>
+            </div>
+            <div id="enemyStatsWrapper">
+                <div id="enemyStats"></div>
+            </div>
+
+            <div id="bottomButtons">
+                <button id="leave" class="standardBtn" onclick="leaveGame()">Мне надоело</button>
+            </div>
+
+            <div id="chat">
+                <textarea id="chatLog" cols="120" rows="20" readonly></textarea>
+            </div>
+            <div id="chatBottom">
+                <input type="text" id="chatInput">
+                <div id="btnSend" class="btnChat" onclick="sendToChat()"></div>
+            </div>
+        </div>
+    </div>
+    <div id="rightWrapper"></div>
+    <div id="bottomWrapper"></div>
+</div>
+
+<div id="errModal" class="modal-window" hidden>
+    <span id="errorText" style="font-size: xx-large;"></span>
+    <button type="button" class="standardBtn" onclick="leaveGame()">Вернуться в лобби</button>
+</div>
+</body>
+</html>

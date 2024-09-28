@@ -1,0 +1,98 @@
+<html>
+<head>
+    <meta charset="UTF-8">
+    <link href="/fonts/fonts.css" rel="stylesheet">
+    <link href="/css/common.css" rel="stylesheet">
+    <link href="/css/hello.css" rel="stylesheet">
+
+    <title>{msg:game_title}</title>
+</head>
+<body>
+<script>
+    function login() {
+        // Create an object to represent the form data
+        const formData = new URLSearchParams();
+        formData.append("j_username", document.getElementById("username").value);
+        formData.append("j_password", document.getElementById("password").value);
+
+        // Make an HTTP POST request using fetch against j_security_check endpoint
+        fetch("j_security_check", {
+            method: "POST",
+            body: formData,
+            headers: {
+                "Content-Type": "application/x-www-form-urlencoded",
+            },
+        }).then((response) => {
+            if (response.status === 200) {
+                window.location.replace("/lobby");
+            } else {
+                register();
+            }
+        }).catch((error) => {
+            printError('Небольшие технические чоколатки: ' + error);
+        });
+    }
+
+    function register() {
+        let username = document.getElementById("username").value;
+        let password = document.getElementById("password").value;
+
+        fetch("hello", {
+            method: "POST",
+            body: JSON.stringify({ username: username, password: password }),
+            headers: {
+                "Content-Type": "application/json",
+            },
+        }).then(async (response) => {
+            const t = await response.text();
+            if (response.status === 200) {
+                if (t === 'contains') {
+                    printError('Пользователь уже существует');
+                } else if (t === 'created') {
+                    login();
+                }
+            } else {
+                printError('Небольшие технические чоколатки: ' + t);
+            }
+        }).catch((error) => {
+            printError('Небольшие технические чоколатки: ' + error);
+        });
+    }
+
+    function printError(str) {
+        const eWrapper = document.getElementById('errorWrapper');
+        if (eWrapper.children.length > 0) {
+            eWrapper.removeChild(eWrapper.children[0]);
+        }
+        const div = document.createElement('div');
+        div.className = 'loginError';
+        div.innerText = str;
+        eWrapper.appendChild(div);
+    }
+
+    document.addEventListener('keypress', function (e) {
+        if (e.code === 'Enter') {
+            document.getElementById('loginBtn').click();
+        }
+    });
+</script>
+<div id="helloWrapper">
+    <div id="headerWrapper">
+        <img src="/img/logo.svg">
+    </div>
+    <div id="titleWrapper">
+        <span style="text-align: center;font-size: xx-large;">Добро пожаловать в морской бой! Вводи ниже логин/пароль и проходи в лобби. (Пароль только запомни, я не умею их восстанавливать)</span>
+    </div>
+    <div id="errorWrapper"></div>
+    <div id="loginWrapper">
+        <input type="text" placeholder="Логин" id="username" name="j_username" required>
+    </div>
+    <div id="passwordWrapper">
+        <input type="password" placeholder="Пароль" id="password" name="j_password" required>
+    </div>
+    <div id="btnWrapper">
+        <button id="loginBtn" type="button" class="standardBtn" onclick="login()">{msg:greeting_submit}</button>
+    </div>
+</div>
+</body>
+</html>

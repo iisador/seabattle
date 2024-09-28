@@ -1,0 +1,56 @@
+
+.block {
+    background: white;
+    border-radius: 5px;
+    border: 2px solid darkgrey;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+}
+
+.simpleBlock {
+    background: white;
+    border-radius: 5px;
+    border: 2px solid darkgrey;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+}
+
+.blockMarked {
+    background: #bcc7dd;
+    border-radius: 5px;
+    border: 2px solid darkgrey;
+}
+
+.ship {
+    background: #264a92;
+    border-radius: 5px;
+    border: 2px solid #0d1a33;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+}
+
+.enemyShip {
+    background: #fe5301;
+    border-radius: 5px;
+    border: 2px solid #591d00;
+}
+
+.block:hover {
+    background: #e9edf4;
+}
+
+.desc {
+    text-align: center;
+    background: white;
+}
+
+.dot {
+    height: 7px;
+    width: 7px;
+    background-color: #000000;
+    border-radius: 50%;
+    display: inline-block;
+}

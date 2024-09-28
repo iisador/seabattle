@@ -1,0 +1,186 @@
+<html>
+<head>
+    <meta charset="UTF-8">
+    <link href="/fonts/fonts.css" rel="stylesheet">
+    <link href="/css/common.css" rel="stylesheet">
+    <link href="/css/game.css" rel="stylesheet">
+    <link href="/css/field.css" rel="stylesheet">
+    <link href="/css/lobby.css" rel="stylesheet">
+    <script src="/js/field.js"></script>
+    <script src="/js/game.js"></script>
+
+    <title>{msg:game_title}</title>
+</head>
+<body>
+<script>
+    let playerMatrix;
+    let playerField;
+
+    function joinGame() {
+        window.location.replace('/games/{gameId}?field=' + JSON.stringify(playerMatrix.getMatrix()));
+    }
+
+    function resetGame() {
+        const bordersAllowed = document.getElementById('bordersAllowed');
+        const cornersAllowed = document.getElementById('cornersAllowed');
+        const fieldSize = document.getElementById('fieldSize');
+        const ships = document.getElementById('ships');
+
+        playerMatrix = new Matrix(parseInt(fieldSize.value), ships.value, new PositionConfig(bordersAllowed.checked, cornersAllowed.checked));
+        playerField = new Field(parseInt(fieldSize.value), '33px');
+        playerField.drawField(document.getElementById('battlefieldWrapper'));
+
+        document.getElementById('btnJoin').disabled = true;
+    }
+
+    // Нет времени объяснять! Дублироваем код!
+    function random(max) {
+        return Math.floor(Math.random() * max);
+    }
+
+    // Ваще в тупую расстанавливаем.
+    // Прям как оценки требований делаем кароче.
+    function randomFill(tries) {
+        for (let i = 0; i < tries; i++) {
+            resetGame();
+
+            const sortedDeckCount = Array.from(playerMatrix.getShipConfig().keys()).sort().reverse();
+
+            for (let deckCount of sortedDeckCount) {
+                for (let i = 0; i < playerMatrix.getShipConfig().get(deckCount); i++) {
+                    let placed = false;
+                    let retryCount = 20;
+                    while (!placed && retryCount > 0) {
+                        const direction = this.random(2) ? 'horizontal' : 'vertical';
+                        const x = this.random(playerMatrix.getSize());
+                        const y = this.random(playerMatrix.getSize());
+                        if (playerMatrix.canPlaceShip(deckCount, x, y, direction)) {
+                            playerMatrix.placeShip(deckCount, x, y, direction);
+                            playerField.drawShip(deckCount, x, y, direction);
+                            placed = true;
+                        }
+                        retryCount--;
+                    }
+                }
+            }
+
+            if (playerMatrix.isFull()) {
+                document.getElementById('btnJoin').disabled = false;
+                return;
+            }
+        }
+    }
+
+    let markedBlocks = [];
+    let drawingShip = 0;
+    document.addEventListener('mousedown', function (e) {
+        if (playerField.isEmptyFieldBlock(e.target)) {
+            const block = playerField.getBlock(e.target);
+            markedBlocks.push(block);
+            block.mark()
+            drawingShip = 1;
+        }
+    }, false);
+
+    document.addEventListener("mouseover", function (e) {
+        if (drawingShip && playerField.isEmptyFieldBlock(e.target)) {
+            const block = playerField.getBlock(e.target);
+            if (!markedBlocks.includes(block)) {
+                markedBlocks.push(block);
+                block.mark();
+            }
+        }
+    });
+
+    document.addEventListener('mouseup', function (e) {
+        if (drawingShip && playerField.isEmptyFieldBlock(e.target)) {
+            const startBlock = markedBlocks[0];
+            const endBlock = playerField.getBlock(e.target);
+            if (!endBlock.isOneRow(startBlock) && !endBlock.isOneColumn(startBlock)) {
+                for (const block of markedBlocks) {
+                    block.restore();
+                }
+                markedBlocks = [];
+                return;
+            }
+
+            const deckCount = endBlock.getLength(startBlock);
+            const direction = endBlock.isOneRow(startBlock) ? 'horizontal' : 'vertical';
+            const computedStartBlock = endBlock.getStartBlock(startBlock);
+            if (playerMatrix.canPlaceShip(deckCount, computedStartBlock.getX(), computedStartBlock.getY(), direction)) {
+                console.log('placing ship');
+
+                playerMatrix.placeShip(deckCount, computedStartBlock.getX(), computedStartBlock.getY(), direction);
+                playerField.drawShip(deckCount, computedStartBlock.getX(), computedStartBlock.getY(), direction)
+            } else {
+                for (const block of markedBlocks) {
+                    block.restore();
+                }
+            }
+
+            markedBlocks = [];
+        } else {
+            for (const block of markedBlocks) {
+                block.restore();
+            }
+            markedBlocks = [];
+        }
+
+        if (playerMatrix.isFull()) {
+            document.getElementById('btnJoin').disabled = false;
+        }
+
+        drawingShip = 0;
+    }, false);
+
+    window.onload = function () {
+        resetGame();
+    };
+</script>
+<div id="lobbyWrapper">
+    <div id="headerWrapper">
+        <div id="logo">
+            <img style="width: 120px;height: auto;" src="/img/logo_ca.svg">
+        </div>
+    </div>
+    <div id="leftWrapper"></div>
+    <div id="centerWrapper">
+        <div id="gameWrapper">
+            <div id="title">
+                <span class="bigTitle">Присоединение к игре с {opponentName}</span>
+            </div>
+            <div id="newGameWrapper">
+                <div id="gameConfig">
+                    <div id="gameConfigTitle"><span class="midTitle">Расположи свой флот</span></div>
+
+                    <div id="bordersLabel"><label for="bordersAllowed">Касание границ</label></div>
+                    <div id="bordersConf"><input type="checkbox" id="bordersAllowed" name="bordersAllowed" {#if BORDERS_ALLOWED}checked {/if}disabled></div>
+
+                    <div id="cornersLabel"><label for="cornersAllowed">Касание углов кораблей</label></div>
+                    <div id="cornersConf"><input type="checkbox" id="cornersAllowed" name="cornersAllowed" {#if CORNERS_ALLOWED}checked {/if}disabled></div>
+
+                    <div id="fieldLabel"><label for="fieldSize">Размер поля</label></div>
+                    <div id="fieldConf"><input type="text" id="fieldSize" name="fieldSize" value="{FIELD_SIZE}" disabled></div>
+
+                    <div id="shipLabel"><label for="ships">Набор кораблей</label></div>
+                    <div id="shipConf"><input type="text" id="ships" name="ships" value="{SHIPS}" disabled></div>
+
+                    <div id="battlefieldLabel"><label>Расстановка кораблей</label></div>
+                    <div id="battlefieldWrapper"></div>
+                    <div id="battlefieldButtons">
+                        <div id="btnReset" class="btnReset" onclick="resetGame()"></div>
+                        <div id="btnFill" class="btnRandom" onclick="randomFill(10)"></div>
+                    </div>
+                    <div id="configButtons">
+                        <button id="toLobby" class="standardBtn" type="button" onclick="window.location.replace('/lobby/')">Не, чет передумал</button>
+                        <button id="btnJoin" class="standardBtn" disabled onclick="joinGame()">ПОЕХАЛИ</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="rightWrapper"></div>
+    <div id="bottomWrapper"></div>
+</div>
+</body>
+</html>

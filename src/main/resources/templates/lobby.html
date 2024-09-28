@@ -1,0 +1,378 @@
+<!--
+    Я не люблю жс. Я слишком стар для этого дерьма.
+    Если кто-то заглянет в код знайте, я был бух когда писал эти страницы.
+    Да простит меня дядюшка Боб.
+-->
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>{msg:game_title}</title>
+    <link href="/fonts/fonts.css" rel="stylesheet">
+    <link href="/css/common.css" rel="stylesheet">
+    <link href="/css/field.css" rel="stylesheet">
+    <link href="/css/lobby.css" rel="stylesheet">
+    <script src="/js/game.js"></script>
+    <script src="/js/field.js"></script>
+</head>
+<script>
+    let playerMatrix;
+    let playerField;
+
+    function addRowToTable(tableId, top, gameId, createTime, players, gameStatus) {
+        const tbodyRef = document.getElementById(tableId).getElementsByTagName('tbody')[0];
+        const newRow = tbodyRef.insertRow(top ? 0 : -1);
+        newRow.id = gameId;
+        fillRow(newRow, gameId, createTime, players, gameStatus);
+    }
+
+    function fillRow(row, gameId, createTime, players, gameStatus) {
+        const timeCell = row.insertCell();
+        timeCell.appendChild(document.createTextNode(createTime));
+        row.appendChild(timeCell);
+
+        const playersCell = row.insertCell();
+        playersCell.appendChild(document.createTextNode(players));
+        row.appendChild(playersCell);
+
+        const watchCell = row.insertCell();
+        watchCell.style.textAlign = '-webkit-center';
+        const watchDiv = document.createElement('div');
+        watchDiv.className = 'btnView';
+        watchDiv.onclick = function() {
+            window.location.replace('/games/' + gameId + '/view');
+        };
+        watchCell.appendChild(watchDiv);
+        row.appendChild(watchCell);
+
+        if(gameStatus === 'WAITING') {
+            const joinCell = row.insertCell();
+            joinCell.style.textAlign = '-webkit-center';
+            const joinDiv = document.createElement('div');
+            joinDiv.className = 'btnJoin';
+            joinDiv.onclick = function() {
+                window.location.replace('/games/' + gameId + '/join');
+            };
+            joinCell.appendChild(joinDiv);
+            row.appendChild(joinCell);
+        }
+    }
+
+    function modifyRow(gameId, createTime, players, gameStatus) {
+        const row = document.getElementById(gameId);
+        while (row.firstChild) {
+            row.removeChild(row.lastChild);
+        }
+        fillRow(row, gameId, createTime, players, gameStatus);
+    }
+
+    function removeRow(gameId) {
+        const e = document.getElementById(gameId)
+        if(e) {
+            e.parentElement.removeChild(e);
+        }
+    }
+
+    function clearTable(tableId) {
+        const tbodyRef = document.getElementById(tableId).getElementsByTagName('tbody')[0];
+        const new_tbody = document.createElement('tbody');
+        tbodyRef.parentNode.replaceChild(new_tbody, tbodyRef);
+    }
+
+    function newGame() {
+        const bordersAllowed = document.getElementById('bordersAllowed').checked;
+        const cornersAllowed = document.getElementById('cornersAllowed').checked;
+        const fieldSize = document.getElementById('fieldSize').value;
+        const ships = document.getElementById('ships').value;
+
+        fetch("/games", {
+            method: "POST",
+            body: JSON.stringify({
+                field: JSON.stringify(playerMatrix.getMatrix()), config: {
+                    parameters: [
+                        {
+                            name: "FIELD_SIZE",
+                            value: fieldSize
+                        },
+                        {
+                            name: "BORDERS_ALLOWED",
+                            value: bordersAllowed
+                        },
+                        {
+                            name: "CORNERS_ALLOWED",
+                            value: cornersAllowed
+                        },
+                        {
+                            name: "SHIPS",
+                            value: ships
+                        }
+                    ]
+                }
+            }),
+            headers: {
+                "Content-Type": "application/json",
+            },
+        }).then(async (response) => {
+            if (response.status === 200) {
+                const gameId = await response.text();
+                window.location.replace("/games/" + gameId);
+            } else {
+                alert("Тут надо вставить алярму что регистрация не прошла и вывести ошибку");
+            }
+        }).catch((error) => {
+            console.error(error);
+        });
+    }
+
+    function resetGame() {
+        const bordersAllowed = document.getElementById('bordersAllowed');
+        const cornersAllowed = document.getElementById('cornersAllowed');
+        const fieldSize = document.getElementById('fieldSize');
+        const ships = document.getElementById('ships');
+
+        playerMatrix = new Matrix(parseInt(fieldSize.value), ships.value, new PositionConfig(bordersAllowed.checked, cornersAllowed.checked));
+        playerField = new Field(parseInt(fieldSize.value), '33px');
+        playerField.drawField(document.getElementById('battlefieldWrapper'));
+
+        document.getElementById('btnNewGame').disabled = true;
+    }
+
+    // Обновляем настройки игры, если изменился конфиг
+    function gameConfigChanged() {
+        const selectedConfig = document.getElementById('gameConf').value;
+        const config = JSON.parse(document.getElementById('gameConfig_' + selectedConfig).value);
+
+        const bordersAllowed = document.getElementById('bordersAllowed');
+        const cornersAllowed = document.getElementById('cornersAllowed');
+        const fieldSize = document.getElementById('fieldSize');
+        const ships = document.getElementById('ships');
+
+        bordersAllowed.checked = config.bordersAllowed;
+        cornersAllowed.checked = config.cornersAllowed;
+        fieldSize.value = config.fieldSize;
+        ships.value = config.ships;
+
+        resetGame();
+    }
+
+    function random(max) {
+        return Math.floor(Math.random() * max);
+    }
+
+    // Ваще в тупую расстанавливаем.
+    // Прям как оценки требований делаем кароче.
+    function randomFill(tries) {
+        for (let i = 0; i < tries; i++) {
+            resetGame();
+
+            const sortedDeckCount = Array.from(playerMatrix.getShipConfig().keys()).sort().reverse();
+
+            for (let deckCount of sortedDeckCount) {
+                for (let i = 0; i < playerMatrix.getShipConfig().get(deckCount); i++) {
+                    let placed = false;
+                    let retryCount = 20;
+                    while (!placed && retryCount > 0) {
+                        const direction = this.random(2) ? 'horizontal' : 'vertical';
+                        const x = this.random(playerMatrix.getSize());
+                        const y = this.random(playerMatrix.getSize());
+                        if (playerMatrix.canPlaceShip(deckCount, x, y, direction)) {
+                            playerMatrix.placeShip(deckCount, x, y, direction);
+                            playerField.drawShip(deckCount, x, y, direction);
+                            placed = true;
+                        }
+                        retryCount--;
+                    }
+                }
+            }
+
+            if (playerMatrix.isFull()) {
+                document.getElementById('btnNewGame').disabled = false;
+                return;
+            }
+        }
+    }
+
+    let markedBlocks = [];
+    let drawingShip = 0;
+    document.addEventListener('mousedown', function (e) {
+        if (playerField.isEmptyFieldBlock(e.target)) {
+            const block = playerField.getBlock(e.target);
+            markedBlocks.push(block);
+            block.mark()
+            drawingShip = 1;
+        }
+    }, false);
+
+    document.addEventListener("mouseover", function (e) {
+        if (drawingShip && playerField.isEmptyFieldBlock(e.target)) {
+            const block = playerField.getBlock(e.target);
+            if (!markedBlocks.includes(block)) {
+                markedBlocks.push(block);
+                block.mark();
+            }
+        }
+    });
+
+    document.addEventListener('mouseup', function (e) {
+        if (drawingShip && playerField.isEmptyFieldBlock(e.target)) {
+            const startBlock = markedBlocks[0];
+            const endBlock = playerField.getBlock(e.target);
+            if (!endBlock.isOneRow(startBlock) && !endBlock.isOneColumn(startBlock)) {
+                for (const block of markedBlocks) {
+                    block.restore();
+                }
+                markedBlocks = [];
+                return;
+            }
+
+            const deckCount = endBlock.getLength(startBlock);
+            const direction = endBlock.isOneRow(startBlock) ? 'horizontal' : 'vertical';
+            const computedStartBlock = endBlock.getStartBlock(startBlock);
+            if (playerMatrix.canPlaceShip(deckCount, computedStartBlock.getX(), computedStartBlock.getY(), direction)) {
+                console.log('placing ship');
+
+                playerMatrix.placeShip(deckCount, computedStartBlock.getX(), computedStartBlock.getY(), direction);
+                playerField.drawShip(deckCount, computedStartBlock.getX(), computedStartBlock.getY(), direction)
+            } else {
+                for (const block of markedBlocks) {
+                    block.restore();
+                }
+            }
+
+            markedBlocks = [];
+        } else {
+            for (const block of markedBlocks) {
+                block.restore();
+            }
+            markedBlocks = [];
+        }
+
+        if (playerMatrix.isFull()) {
+            document.getElementById('btnNewGame').disabled = false;
+        }
+
+        drawingShip = 0;
+    }, false);
+
+    let socket;
+    window.onload = function () {
+        socket = new WebSocket("ws://" + location.host + "/lobby/games");
+
+        socket.onmessage = function (m) {
+            const cmd = JSON.parse(m.data);
+            console.log(cmd);
+
+            if (Array.isArray(cmd)) {
+                // Я буду удалять сейчас все игры!
+                clearTable('gamesTable');
+
+                // Я буду устанавливать сейчас все игры!
+                for (let i = 0; i < cmd.length; i++) {
+                    if (cmd[i].status === 'PLAYING') {
+                        modifyRow(cmd[i].id, cmd[i].createTime, cmd[i].players, cmd[i].status);
+                    }
+                    if (cmd[i].status === 'WAITING') {
+                        addRowToTable('gamesTable', true, cmd[i].id, cmd[i].createTime, cmd[i].players, cmd[i].status)
+                    }
+                }
+            }
+
+            if (cmd.type === 'GAME_CHANGED') {
+                if (cmd.status === 'PLAYING') {
+                    modifyRow(cmd.id, cmd.createTime, cmd.players, cmd.status);
+                }
+                if(cmd.status === 'FINISHED' || cmd.status === 'FAILED') {
+                    removeRow(cmd.id);
+                }
+                if (cmd.status === 'WAITING') {
+                    addRowToTable('gamesTable', true, cmd.id, cmd.createTime, cmd.players, cmd.status)
+                }
+            }
+        };
+
+        // Установка настроек игры по умолчанию
+        const sGameConf = document.getElementById('gameConf');
+        sGameConf.value = sGameConf.firstElementChild.value;
+        sGameConf.dispatchEvent(new Event('change'));
+    };
+
+    function showHelp() {
+        window.location.replace("/help");
+    }
+</script>
+
+<body>
+<div id="lobbyWrapper">
+    <div id="headerWrapper">
+        <div id="logo">
+            <img style="width: 120px;height: auto;" src="/img/logo_ca.svg">
+        </div>
+    </div>
+    <div id="logoCr">
+        <img style="width: 120px;height: auto;" src="/img/logo_cr.svg">
+    </div>
+    <div id="leftWrapper"></div>
+    <div id="centerWrapper">
+        <div id="gameWrapper">
+            <div id="title">
+                <span class="bigTitle">Добро пожаловать в лобби, {playerName}</span>
+                <span style="font-size: medium;">Перед началом игры лучше прочитать <span style="font-style: italic;text-decoration: underline; cursor: pointer" onclick="showHelp()">справку.</span></span>
+            </div>
+            <div id="newGameWrapper">
+                <div id="gameConfig">
+                    <div id="gameConfigTitle"><span class="midTitle">Начать новую игру</span></div>
+                    <div id="gameTypeLabel"><label for="gameConf">Предустановка</label></div>
+                    <div id="gameTypeConf"><select id="gameConf" name="conf" onchange="gameConfigChanged()">
+                            {#each gameConfigList}
+                                <option value="{it.id}">{it.name}</option>
+                            {/each}
+                        </select>
+                        {#each gameConfigList}
+                            <input type="hidden" id="gameConfig_{it.id}" value="{it.config}">
+                        {/each}</div>
+
+                    <div id="bordersLabel"><label for="bordersAllowed">Касание границ</label></div>
+                    <div id="bordersConf"><input type="checkbox" id="bordersAllowed" name="bordersAllowed" onchange="resetGame()" required></div>
+
+                    <div id="cornersLabel"><label for="cornersAllowed">Касание углов кораблей</label></div>
+                    <div id="cornersConf"><input type="checkbox" id="cornersAllowed" name="cornersAllowed" onchange="resetGame()" required></div>
+
+                    <div id="fieldLabel"><label for="fieldSize">Размер поля</label></div>
+                    <div id="fieldConf"><input type="text" id="fieldSize" name="fieldSize" onchange="resetGame()" required></div>
+
+                    <div id="shipLabel"><label for="ships">Набор кораблей</label></div>
+                    <div id="shipConf"><input type="text" id="ships" name="ships" onchange="resetGame()" required></div>
+
+                    <div id="battlefieldLabel"><label>Расстановка кораблей</label></div>
+                    <div id="battlefieldWrapper"></div>
+                    <div id="battlefieldButtons">
+                        <div id="btnReset" class="btnReset" onclick="resetGame()"></div>
+                        <div id="btnFill" class="btnRandom" onclick="randomFill(10)"></div>
+                    </div>
+                    <div id="configButtons">
+                        <button id="btnNewGame" class="standardBtn" disabled onclick="newGame()">ПОЕХАЛИ</button>
+                    </div>
+                </div>
+            </div>
+            <div id="waitingGamesWrapper">
+                <span class="midTitle">Текущие игры</span>
+                <table id="gamesTable">
+                    <thead>
+                    <tr>
+                        <th>Создана</th>
+                        <th>Игроки</th>
+                        <th>Посмотреть</th>
+                        <th>Присоединиться</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div id="rightWrapper">
+    </div>
+    <div id="bottomWrapper"></div>
+</div>
+</body>
+</html>

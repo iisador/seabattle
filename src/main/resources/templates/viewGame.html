@@ -1,0 +1,327 @@
+<html>
+<head>
+    <meta charset="UTF-8">
+    <link href="/fonts/fonts.css" rel="stylesheet">
+    <link href="/css/common.css" rel="stylesheet">
+    <link href="/css/view.css" rel="stylesheet">
+    <link href="/css/field.css" rel="stylesheet">
+    <script src="/js/field.js"></script>
+
+    <title>{msg:game_title}</title>
+</head>
+<script>
+    let player1Name;
+    let player2Name;
+    let blockSize = '33px';
+    let player1FieldBlocks;
+    let player2FieldBlocks;
+    let enemyName;
+    let isGameFinished;
+
+    function whoami() {
+        return '{viewerName}';
+    }
+
+    function sendCommand(type, payload) {
+        const command = { };
+        command.type = type;
+        if (payload) {
+            Object.keys(payload).forEach(function (key) {
+                command[key] = payload[key];
+            });
+        }
+        socket.send(JSON.stringify(command));
+    }
+
+    function sleep(milliseconds) {
+        const date = Date.now();
+        let currentDate = Date.now();
+        while (currentDate - date < milliseconds) {
+            currentDate = Date.now();
+        }
+    }
+
+    function setTurn(turn, size = 'xx-large') {
+        const turnSpan = document.getElementById('turnSpan');
+        turnSpan.innerText = turn;
+        turnSpan.style.fontSize = size;
+    }
+
+    function chatMessage(playerName, m) {
+        const chatLog = document.getElementById('chatLog');
+        chatLog.value += '\n' + whoami() + '> ' + m;
+        chatLog.scrollTop = chatLog.scrollHeight;
+    }
+
+    function sendToChat() {
+        const message = document.getElementById('chatInput').value;
+        if(message) {
+            sendCommand('CHAT_MESSAGE', { message: message });
+            document.getElementById('chatInput').value = null;
+        }
+    }
+
+    function playerJoined(playerName) {
+        chatMessage(playerName, 'Присоединился');
+    }
+
+    function updateTitle(str) {
+        const titleSpan = document.getElementById('titleSpan');
+        titleSpan.innerText = str;
+    }
+
+    function gameStarted(turn, player1, player2) {
+        chatMessage('', 'Игра началась!');
+        chatMessage('', 'Ход за ' + turn + '\n');
+        setTurn('Ход: ' + turn);
+        updateTitle('БИТВА ' + player1 + ' vs ' + player2);
+    }
+
+    function gameFinished(winner, player1, player2) {
+        setTurn('ПОБЕДА ' + winner + ' УРА!!')
+        chatMessage('', 'ПОБЕДА ЗА, ' + winner + ' УРА!!!');
+
+        player1FieldBlocks = new Field(player1.matrix.length, blockSize, 'player1', false);
+        player1FieldBlocks.drawField(document.getElementById('player1Field'));
+        player1FieldBlocks.drawShips(JSON.parse(player1.field));
+        player1FieldBlocks.layoutBattlefield(player1.matrix);
+        drawStats(document.getElementById('player1Stats'), player1.ships, document.getElementById('player1StatsTitleSpan'), 'ФЛОТ');
+
+        player2FieldBlocks = new Field(player2.matrix.length, blockSize, 'player2', false);
+        player2FieldBlocks.drawField(document.getElementById('player2Field'));
+        player2FieldBlocks.drawShips(JSON.parse(player2.field));
+        player2FieldBlocks.layoutBattlefield(player2.matrix);
+        drawStats(document.getElementById('player2Stats'), player2.ships, document.getElementById('player2StatsTitleSpan'), 'ФЛОТ');
+    }
+
+    function playerLeaved(leavedPlayer) {
+        chatMessage(leavedPlayer, 'Отсоединился')
+    }
+
+    function leaveGame() {
+        window.location.replace('/lobby/');
+    }
+
+    function drawStats(div, stats, statsSpan, statsText) {
+        statsSpan.innerText = statsText;
+
+        for (let i = 0; i < div.children.length; i++) {
+            div.removeChild(div.children[i]);
+        }
+
+        const maxShip = getMaxShip(stats);
+        div.style.display = 'grid';
+        div.style.gridTemplateColumns = 'repeat(' + (maxShip + 1) + ', ' + blockSize + ')';
+        div.style.gridTemplateRows = 'repeat(' + Object.keys(stats).length + ', ' + blockSize + ')';
+        div.style.gap = '2px';
+
+        for (let i = 0; i < 10; i++) {
+            if (typeof stats[i] !== 'undefined') {
+                const ship = document.createElement('div');
+                ship.className = 'ship';
+                ship.style.gridColumnStart = '1';
+                ship.style.gridColumnEnd = '' + (i + 1);
+                ship.style.gridRow = '' + i;
+                div.appendChild(ship);
+
+                const count = document.createElement('div');
+                count.style.gridColumn = '' + (maxShip + 1);
+                count.style.gridRow = '' + i;
+                count.style.display = 'flex';
+                count.style.justifyContent = 'space-around';
+                count.style.alignItems = 'center';
+                count.innerText = '' + stats[i];
+                div.appendChild(count);
+            }
+        }
+    }
+
+    function getMaxShip(stats) {
+        let max = 1;
+        Object.keys(stats).forEach(k => {
+            if (k > max) {
+                max = parseInt(k);
+            }
+        });
+        return max;
+    }
+
+    function fireResult(attacker, opponent, x, y, result, matrix, stats) {
+        if (player1Name === attacker) {
+            player2FieldBlocks = new Field(player1FieldBlocks.getFieldSize(), '33px', 'player2');
+            player2FieldBlocks.drawField(document.getElementById('player2Field'));
+            player2FieldBlocks.drawBattlefield(matrix, 'ship');
+            drawStats(document.getElementById('player2Stats'), stats, document.getElementById('player2StatsTitleSpan'), 'ФЛОТ');
+        } else {
+            player1FieldBlocks = new Field(player2FieldBlocks.getFieldSize(), '33px', 'player1');
+            player1FieldBlocks.drawField(document.getElementById('player1Field'));
+            player1FieldBlocks.drawBattlefield(matrix, 'ship');
+            drawStats(document.getElementById('player1Stats'), stats, document.getElementById('player1StatsTitleSpan'), 'ФЛОТ');
+        }
+
+        switch (result) {
+            case 'MISSED':
+                chatMessage(opponent, 'Мимо!');
+                chatMessage('', 'Ход переходит К ' + opponent + '\n');
+                setTurn('Ход: ' + opponent);
+                break;
+            case 'WOUNDED':
+                chatMessage(opponent, 'Ранил');
+                chatMessage('', attacker + ' продолжает' + '\n');
+                break;
+            case 'KILLED':
+                chatMessage(opponent, 'Убил');
+                chatMessage('', attacker + ' продолжает' + '\n');
+                break;
+        }
+    }
+
+    let socket;
+    window.onload = function () {
+        let url = 'ws://' + location.host + '/game/{gameId}';
+        url = url + '?viewerName=' + whoami();
+
+        socket = new WebSocket(url);
+
+        socket.onmessage = function (m) {
+            console.log(m);
+            const cmd = JSON.parse(m.data);
+
+            switch (cmd.type) {
+                case 'ERROR':
+                    failWithError(cmd.error);
+                    break
+                case 'VIEWER_JOINED':
+                    player1Name = cmd.player1.name;
+                    document.getElementById('player1TitleSpan').innerText = player1Name;
+                    player1FieldBlocks = new Field(cmd.player1.matrix.length, blockSize, 'player1', false);
+                    player1FieldBlocks.drawField(document.getElementById('player1Field'));
+                    player1FieldBlocks.drawBattlefield(cmd.player1.matrix, 'ship')
+                    drawStats(document.getElementById('player1Stats'), cmd.player1.ships, document.getElementById('player1StatsTitleSpan'), 'ФЛОТ');
+
+                    if(cmd.player2) {
+                        player2Name = cmd.player2.name;
+                        document.getElementById('player2TitleSpan').innerText = player2Name;
+                        player2FieldBlocks = new Field(cmd.player2.matrix.length, blockSize, 'player2', false);
+                        player1FieldBlocks.drawField(document.getElementById('player2Field'));
+                        player2FieldBlocks.drawBattlefield(cmd.player2.matrix, 'ship');
+                        drawStats(document.getElementById('player2Stats'), cmd.player2.ships, document.getElementById('player2StatsTitleSpan'), 'ФЛОТ');
+                    }
+
+                    if(cmd.viewerName !== whoami()) {
+                        chatMessage(cmd.viewerName + 'Присоединился посмотреть')
+                    }
+                    break;
+                case 'PLAYER_JOINED':
+                    playerJoined(cmd.playerName);
+
+                    player2Name = cmd.playerName;
+                    document.getElementById('player2TitleSpan').innerText = player2Name;
+                    player2FieldBlocks = new Field(player1FieldBlocks.getFieldSize(), blockSize, 'player2', false);
+                    player1FieldBlocks.drawField(document.getElementById('player2Field'));
+                    drawStats(document.getElementById('player2Stats'), cmd.aliveShips, document.getElementById('player2StatsTitleSpan'), 'ФЛОТ');
+                    break;
+                case 'FIRE_RESULT':
+                    fireResult(cmd.attacker, cmd.opponent, cmd.x, cmd.y, cmd.result, cmd.matrix, cmd.aliveShips);
+                    break;
+                case 'START_GAME':
+                    gameStarted(cmd.turn, cmd.player1, cmd.player2);
+                    break;
+                case 'GAME_FINISHED':
+                    gameFinished(cmd.winner, cmd.player1, cmd.player2);
+                    break;
+                case 'CHAT_MESSAGE':
+                    chatMessage(cmd.playerName, cmd.message);
+                    break;
+                case 'PLAYER_LEAVED':
+                    if (!isGameFinished) {
+                        playerLeaved(cmd.playerName);
+                    }
+            }
+        };
+
+        socket.onclose = function () {
+            if (!isGameFinished) {
+                failWithError();
+            }
+        }
+    };
+
+    function failWithError(error = 'Возникли непредвиденные технические чоколадки') {
+        document.getElementById('gameWrapper').style.filter = 'grayscale(1)';
+        document.getElementById('errModal').style.visibility = 'visible';
+        document.getElementById('errorText').innerText = error;
+    }
+
+    document.addEventListener('keypress', function (e) {
+        if (e.code === 'Enter') {
+            document.getElementById('btnSend').click();
+        }
+    });
+</script>
+<body>
+<div id="lobbyWrapper">
+    <div id="headerWrapper">
+        <div id="logo">
+            <img style="width: 120px;height: auto;" src="/img/logo_ca.svg">
+        </div>
+    </div>
+    <div id="logoCr">
+        <img style="width: 120px;height: auto;" src="/img/logo_cr.svg">
+    </div>
+    <div id="leftWrapper"></div>
+    <div id="centerWrapper">
+        <div id="gameWrapper">
+            <div id="title">
+                <span id="titleSpan" class="bigTitle">Ожидание игрока</span>
+            </div>
+            <div id="turn">
+                <span id="turnSpan" class="midTitle"></span>
+            </div>
+            <div id="player1FieldTitle">
+                <span id="player1TitleSpan" class="midTitle"></span>
+            </div>
+            <div id="player1Field"></div>
+
+            <div id="player2FieldTitle">
+                <span id="player2TitleSpan" class="midTitle"></span>
+            </div>
+            <div id="player2Field"></div>
+
+            <div id="player1StatsTitle">
+                <span id="player1StatsTitleSpan" class="midTitle"></span>
+            </div>
+            <div id="player2StatsTitle">
+                <span id="player2StatsTitleSpan" class="midTitle"></span>
+            </div>
+
+            <div id="player1StatsWrapper">
+                <div id="player1Stats"></div>
+            </div>
+            <div id="player2StatsWrapper">
+                <div id="player2Stats"></div>
+            </div>
+
+            <div id="bottomButtons">
+                <button id="leave" class="standardBtn" onclick="leaveGame()">Надоело смотреть</button>
+            </div>
+
+            <div id="chat">
+                <textarea id="chatLog" cols="120" rows="20" readonly></textarea>
+            </div>
+            <div id="chatBottom">
+                <input type="text" id="chatInput">
+                <div id="btnSend" class="btnChat" onclick="sendToChat()"></div>
+            </div>
+        </div>
+    </div>
+    <div id="rightWrapper"></div>
+    <div id="bottomWrapper"></div>
+</div>
+
+<div id="errModal" class="modal-window" hidden>
+    <span id="errorText" style="font-size: xx-large;"></span>
+    <button type="button" class="standardBtn" onclick="leaveGame()">Вернуться в лобби</button>
+</div>
+</body>
+</html>

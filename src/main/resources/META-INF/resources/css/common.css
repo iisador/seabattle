@@ -1,0 +1,65 @@
+body {
+    font: normal 18px RobotoSlab;
+    line-height: 31px;
+    color: #264a92;
+    background: url('/img/wave.svg');
+}
+
+.standardBtn {
+    background-color: #e9edf4;
+    border: 2px solid #264a92;
+    border-radius: 5px;
+    font-family: ST-Nizhegorodsky;
+    font-size: larger;
+}
+
+.standardBtn:hover {
+    background-color: #dee4ef;
+    border: 2px solid #264a92;
+    border-radius: 5px;
+}
+
+.bigTitle {
+    font-family: ST-Nizhegorodsky;
+    font-size: xxx-large;
+}
+
+.midTitle {
+    font-family: ST-Nizhegorodsky;
+    font-size: xx-large;
+}
+
+.btnReset {
+    background: url('/img/Icon%20Pack%20Black.svg') -700px -416px / 800px 800px no-repeat;
+    width: 30px;
+    height: 30px;
+    cursor: pointer;
+}
+
+.btnRandom {
+    background: url('/img/Icon%20Pack%20Black.svg') -559px -252px / 800px 800px no-repeat;
+    width: 30px;
+    height: 30px;
+    cursor: pointer;
+}
+
+.btnJoin {
+    background: url('/img/Icon%20Pack%20Black.svg') -424px -125px / 800px 800px no-repeat;
+    width: 30px;
+    height: 30px;
+    cursor: pointer;
+}
+
+.btnView {
+    background: url('/img/Icon%20Pack%20Black.svg') -602px -490px / 800px 800px no-repeat;
+    width: 33px;
+    height: 27px;
+    cursor: pointer;
+}
+
+.btnChat {
+    background: url('/img/Icon%20Pack%20Black.svg') -700px -253px / 800px 800px no-repeat;
+    width: 30px;
+    height: 30px;
+    cursor: pointer;
+}
