@@ -191,12 +191,13 @@ public class GameWebSocket {
                     Squadron s = opponent.getSquadron();
                     FireResult fr = s.fire(cmd.getX(), cmd.getY());
 
-                    if (fr.equals(FireResult.MISSED)) {
-                        gw.setTurn(opponent.getPlayer().getPlayerName());
-                    }
                     broadcastToGame(gameId,
                         new ResponseFire(attacker, opponent.getPlayer().getPlayerName(), cmd.getX(), cmd.getY(), fr, s.getMatrix(),
                             s.getAliveShips()));
+
+                    if (fr.equals(FireResult.MISSED)) {
+                        gw.setTurn(opponent.getPlayer().getPlayerName());
+                    }
 
                     if (fr.equals(FireResult.ALL_KILLED)) {
                         gw.setFinished(true);
@@ -267,6 +268,8 @@ public class GameWebSocket {
                 String leavedPlayerName = playerSessions.remove(session.getId());
                 sessions.get(gameId).remove(session);
 
+                broadcastToGame(gameId, new ResponsePlayerLeaved(leavedPlayerName));
+
                 // Чистим мапу с сессиями
                 if (sessions.get(gameId).isEmpty()) {
                     sessions.remove(gameId);
@@ -304,7 +307,6 @@ public class GameWebSocket {
                     }
                     eventBus.publish("gameBus",
                         new GamesGrid(gw.getGame().getId(), gw.getGame().getCreateTime(), gw.getGame().getStatus(), gw.getPlayersString()));
-                    broadcastToGame(gameId, new ResponsePlayerLeaved(leavedPlayerName));
                 }
             }
         }

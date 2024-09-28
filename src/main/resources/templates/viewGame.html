@@ -49,7 +49,7 @@
 
     function chatMessage(playerName, m) {
         const chatLog = document.getElementById('chatLog');
-        chatLog.value += '\n' + whoami() + '> ' + m;
+        chatLog.value += '\n' + playerName + '> ' + m;
         chatLog.scrollTop = chatLog.scrollHeight;
     }
 
@@ -172,6 +172,9 @@
             case 'KILLED':
                 chatMessage(opponent, 'Убил');
                 chatMessage('', attacker + ' продолжает' + '\n');
+                break
+            case 'ALL_KILLED':
+                chatMessage(opponent, 'Убил');
                 break;
         }
     }

@@ -167,7 +167,8 @@
     }
 
     function fire(x, y) {
-        chatMessage(whoami(), myFieldBlocks.getLetter(x + 1).toUpperCase() + ':' + (y + 1));
+        const msg = myFieldBlocks.getLetter(x + 1).toUpperCase() + ':' + (y + 1);
+        sendCommand('CHAT_MESSAGE', { message: msg })
         sendCommand('FIRE', { x: x, y: y, playerName: whoami() });
     }
 
@@ -194,6 +195,9 @@
                     chatMessage(opponent, 'Убил');
                     chatMessage('', attacker + ' продолжает' + '\n');
                     break;
+                case 'ALL_KILLED':
+                    chatMessage(opponent, 'Убил');
+                    break;
             }
         } else {
             myFieldBlocks = new Field(myShips.length, '33px', 'my', false);
@@ -217,6 +221,9 @@
                 case 'KILLED':
                     chatMessage(opponent, 'Убил');
                     chatMessage('', attacker + ' продолжает' + '\n');
+                    break;
+                case 'ALL_KILLED':
+                    chatMessage(opponent, 'Убил');
                     break;
             }
         }
