@@ -13,8 +13,9 @@ public class ResponseFire extends Response {
     private final FireResult result;
     private final char[][] matrix;
     private final Map<Integer, Integer>  aliveShips;
+    private final long gameDuration;
 
-    public ResponseFire(String attacker, String opponent, int x, int y, FireResult result, char[][] matrix, Map<Integer, Integer> aliveShips) {
+    public ResponseFire(String attacker, String opponent, int x, int y, FireResult result, char[][] matrix, Map<Integer, Integer> aliveShips, long gameDuration) {
         super(ResponseType.FIRE_RESULT);
         this.attacker = attacker;
         this.opponent = opponent;
@@ -23,6 +24,7 @@ public class ResponseFire extends Response {
         this.result = result;
         this.matrix = matrix;
         this.aliveShips = aliveShips;
+        this.gameDuration = gameDuration;
     }
 
     public String getAttacker() {
@@ -51,5 +53,9 @@ public class ResponseFire extends Response {
 
     public Map<Integer, Integer>  getAliveShips() {
         return aliveShips;
+    }
+
+    public long getGameDuration() {
+        return gameDuration;
     }
 }

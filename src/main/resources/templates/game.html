@@ -174,7 +174,28 @@
         sendCommand('FIRE', { x: x, y: y, playerName: whoami() });
     }
 
-    function fireResult(attacker, opponent, x, y, result, matrix, stats) {
+    function startTimer(duration, display) {
+        let timer = duration, minutes, seconds;
+        setInterval(function () {
+            minutes = parseInt(timer / 60, 10);
+            seconds = parseInt(timer % 60, 10);
+
+            minutes = minutes < 10 ? "0" + minutes : minutes;
+            seconds = seconds < 10 ? "0" + seconds : seconds;
+
+            display.textContent = minutes + ":" + seconds;
+
+            if (--timer < 0) {
+                timer = 0;
+            }
+        }, 1000);
+    }
+
+    function fireResult(attacker, opponent, x, y, result, matrix, stats, duration) {
+        if (duration) {
+            startTimer(duration, document.getElementById('countdown'));
+        }
+
         if (attacker === whoami()) {
             enemyFieldBlocks = new Field(myShips.length, '33px', 'en');
             enemyFieldBlocks.drawField(document.getElementById('enemyField'));
@@ -254,7 +275,7 @@
                     playerJoined(cmd.playerName, cmd.aliveShips);
                     break;
                 case 'FIRE_RESULT':
-                    fireResult(cmd.attacker, cmd.opponent, cmd.x, cmd.y, cmd.result, cmd.matrix, cmd.aliveShips);
+                    fireResult(cmd.attacker, cmd.opponent, cmd.x, cmd.y, cmd.result, cmd.matrix, cmd.aliveShips, cmd.gameDuration);
                     break;
                 case 'START_GAME':
                     gameStarted(cmd.turn, cmd.player1, cmd.player2);
@@ -324,6 +345,10 @@
             </div>
             <div id="myField"></div>
 
+            <div id="timer">
+                <span class="midTitle">До конца игры:</span>
+                <span id="countdown" class="midTitle">00:00</span>
+            </div>
             <div id="enemyFieldTitle">
                 <span id="enemyTitleSpan" class="midTitle"></span>
             </div>

@@ -1,5 +1,7 @@
 package ru.isador.games.seabattle.web.game;
 
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -170,7 +172,6 @@ public class GameWebSocket {
 
     @OnMessage
     public void onMessage(Session session, @PathParam("id") String gameId, String message) {
-        System.out.println(message);
         CommandType type = CommandType.getType(message);
 
         if (type == null) {
@@ -187,13 +188,37 @@ public class GameWebSocket {
                 CommandFire cmd = fromJson(gw, message, CommandFire.class);
                 String attacker = playerSessions.get(session.getId());
                 if (gw.getTurn().equals(attacker)) {
+
+                    // Время игры вышло
+                    if (gw.getFirstFireTime() != null
+                        && LocalDateTime.now().isAfter(gw.getFirstFireTime().plus(gw.getGame().getConfig().getGameDuration()))) {
+                        List<ResponseGameFinished.Player> players = gw.getSortedPlayerNames().stream()
+                                                                        .map(gw::getPlayer)
+                                                                        .map(p -> new ResponseGameFinished.Player(p.getPlayer().getPlayerName(),
+                                                                            p.getSquadron().getMatrix(), p.getPlayer().getField(), p.getSquadron()
+                                                                                                                                    .getAliveShips()))
+                                                                        .toList();
+                        broadcastToGame(gameId, new ResponseGameFinished(null, gameId, players.get(0), players.get(1)));
+                        eventBus.publish("gameBus",
+                            new GamesGrid(gw.getGame().getId(), gw.getGame().getCreateTime(), gw.getGame().getStatus(), gw.getPlayersString()));
+
+                        gw.setFinished(true);
+                        gw.getGame().setStatus(GameStatus.FINISHED);
+                        gameService.finishGame(gameId, gw.getTurn(), gw.getCommands());
+                        return;
+                    }
                     PlayerWrapper opponent = gw.getOtherPlayer(attacker);
                     Squadron s = opponent.getSquadron();
                     FireResult fr = s.fire(cmd.getX(), cmd.getY());
 
                     broadcastToGame(gameId,
                         new ResponseFire(attacker, opponent.getPlayer().getPlayerName(), cmd.getX(), cmd.getY(), fr, s.getMatrix(),
-                            s.getAliveShips()));
+                            s.getAliveShips(), gw.getFirstFireTime() == null ? gw.getGame().getConfig().getGameDuration().get(ChronoUnit.SECONDS) : 0));
+
+                    // Запоминаем время первой атаки
+                    if (gw.getFirstFireTime() == null) {
+                        gw.setFirstFireTime(LocalDateTime.now());
+                    }
 
                     if (fr.equals(FireResult.MISSED)) {
                         gw.setTurn(opponent.getPlayer().getPlayerName());

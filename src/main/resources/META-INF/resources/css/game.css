@@ -108,6 +108,14 @@ div#myField {
     justify-content: space-around;
 }
 
+div#timer {
+    grid-row: 4;
+    grid-column: 2;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+}
 div#enemyFieldTitle {
     grid-row: 3;
     grid-column: 3;

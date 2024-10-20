@@ -1,6 +1,8 @@
 package ru.isador.games.seabattle.domain.config;
 
 import java.io.Serializable;
+import java.time.Duration;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -14,6 +16,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 
 @Entity
 @Table(name = "CONFIG")
@@ -37,6 +40,9 @@ public class Config implements Serializable {
     @JoinColumn(name = "CONFIG_ID", referencedColumnName = "ID")
     private List<GameParameter> parameters = new ArrayList<>();
 
+    @Transient
+    private Duration gameDuration;
+
     public Config() {
         predefined = false;
     }
@@ -55,6 +61,18 @@ public class Config implements Serializable {
         return configId;
     }
 
+    public Duration getGameDuration() {
+        if (gameDuration == null) {
+            gameDuration = parameters.stream()
+                               .filter(p -> p.getId().getName().equals("GAME_DURATION_MINUTES"))
+                               .map(p -> Duration.of(Integer.parseInt(p.getValue()), ChronoUnit.MINUTES))
+                               .findFirst()
+                               .orElse(Duration.ofMinutes(3));
+        }
+
+        return gameDuration;
+    }
+
     public String getName() {
         return name;
     }
@@ -63,15 +81,15 @@ public class Config implements Serializable {
         this.name = name;
     }
 
+    public int getOrder() {
+        return order;
+    }
+
     public List<GameParameter> getParameters() {
         return parameters;
     }
 
     public boolean isPredefined() {
         return predefined;
-    }
-
-    public int getOrder() {
-        return order;
     }
 }

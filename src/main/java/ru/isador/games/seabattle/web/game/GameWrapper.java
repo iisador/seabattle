@@ -1,5 +1,6 @@
 package ru.isador.games.seabattle.web.game;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -19,6 +20,7 @@ public class GameWrapper {
     private final List<GameLog> commands = new ArrayList<>();
     private String turn;
     private boolean finished = false;
+    private LocalDateTime firstFireTime;
 
     public GameWrapper(Game game) {
         this.game = game;
@@ -104,5 +106,13 @@ public class GameWrapper {
 
     public void setFinished(boolean finished) {
         this.finished = finished;
+    }
+
+    public LocalDateTime getFirstFireTime() {
+        return firstFireTime;
+    }
+
+    public void setFirstFireTime(LocalDateTime firstFireTime) {
+        this.firstFireTime = firstFireTime;
     }
 }
