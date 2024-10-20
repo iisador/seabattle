@@ -128,6 +128,35 @@
         });
     }
 
+    // Это я скомуниздил со стековерфлов
+    // нифига не понял как это работает
+    function isInt(value) {
+        return !isNaN(value) && (function(x) { return (x | 0) === x; })(parseFloat(value));
+    }
+
+    // Проверяем ограничения и очищаем поле если всё окэй
+    function validateAndReset() {
+
+        // hide errors
+        const fieldErrorSpan = document.getElementById('fieldError');
+        fieldErrorSpan.innerText = '';
+
+        let hasErrors = false;
+
+        const fieldSize = document.getElementById('fieldSize');
+        // Ограничиваем размер поля [3, 31]
+        if (!isInt(fieldSize.value) || fieldSize.value < 3 || fieldSize.value > 31) {
+            hasErrors = true;
+            fieldErrorSpan.innerText = 'Кораблинное поле ограничено значениями от 3 до 31 клеток';
+            fieldErrorSpan.style.visibility = 'visible';
+        }
+
+        // семь бед - один ресет
+        if (!hasErrors) {
+            resetGame();
+        }
+    }
+
     function resetGame() {
         const bordersAllowed = document.getElementById('bordersAllowed');
         const cornersAllowed = document.getElementById('cornersAllowed');
@@ -355,16 +384,17 @@
                         {/each}</div>
 
                     <div id="bordersLabel"><label for="bordersAllowed">Касание границ</label></div>
-                    <div id="bordersConf"><input type="checkbox" id="bordersAllowed" name="bordersAllowed" onchange="resetGame()" required></div>
+                    <div id="bordersConf"><input type="checkbox" id="bordersAllowed" name="bordersAllowed" onchange="validateAndReset()"></div>
 
                     <div id="cornersLabel"><label for="cornersAllowed">Касание углов кораблей</label></div>
-                    <div id="cornersConf"><input type="checkbox" id="cornersAllowed" name="cornersAllowed" onchange="resetGame()" required></div>
+                    <div id="cornersConf"><input type="checkbox" id="cornersAllowed" name="cornersAllowed" onchange="validateAndReset()"></div>
 
+                    <span id="fieldError" class="errorText"></span>
                     <div id="fieldLabel"><label for="fieldSize">Размер поля</label></div>
-                    <div id="fieldConf"><input type="text" id="fieldSize" name="fieldSize" onchange="resetGame()" required></div>
+                    <div id="fieldConf"><input type="text" id="fieldSize" name="fieldSize" onchange="validateAndReset()"></div>
 
                     <div id="shipLabel"><label for="ships">Набор кораблей</label></div>
-                    <div id="shipConf"><input type="text" id="ships" name="ships" onchange="resetGame()" required></div>
+                    <div id="shipConf"><input type="text" id="ships" name="ships" onchange="validateAndReset()"></div>
 
                     <div id="battlefieldLabel"><label>Расстановка кораблей</label></div>
                     <div id="battlefieldWrapper"></div>
