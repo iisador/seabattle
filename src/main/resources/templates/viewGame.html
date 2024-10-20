@@ -1,4 +1,4 @@
-<html>
+<html lang="ru">
 <head>
     <meta charset="UTF-8">
     <link href="/fonts/fonts.css" rel="stylesheet">
@@ -199,14 +199,14 @@
                     document.getElementById('player1TitleSpan').innerText = player1Name;
                     player1FieldBlocks = new Field(cmd.player1.matrix.length, blockSize, 'player1', false);
                     player1FieldBlocks.drawField(document.getElementById('player1Field'));
-                    player1FieldBlocks.drawBattlefield(cmd.player1.matrix, 'ship')
+                    player1FieldBlocks.drawBattlefield(cmd.player1.matrix, 'ship');
                     drawStats(document.getElementById('player1Stats'), cmd.player1.ships, document.getElementById('player1StatsTitleSpan'), 'ФЛОТ');
 
-                    if(cmd.player2) {
+                    if (cmd.player2) {
                         player2Name = cmd.player2.name;
                         document.getElementById('player2TitleSpan').innerText = player2Name;
                         player2FieldBlocks = new Field(cmd.player2.matrix.length, blockSize, 'player2', false);
-                        player1FieldBlocks.drawField(document.getElementById('player2Field'));
+                        player2FieldBlocks.drawField(document.getElementById('player2Field'));
                         player2FieldBlocks.drawBattlefield(cmd.player2.matrix, 'ship');
                         drawStats(document.getElementById('player2Stats'), cmd.player2.ships, document.getElementById('player2StatsTitleSpan'), 'ФЛОТ');
                     }
@@ -221,7 +221,7 @@
                     player2Name = cmd.playerName;
                     document.getElementById('player2TitleSpan').innerText = player2Name;
                     player2FieldBlocks = new Field(player1FieldBlocks.getFieldSize(), blockSize, 'player2', false);
-                    player1FieldBlocks.drawField(document.getElementById('player2Field'));
+                    player2FieldBlocks.drawField(document.getElementById('player2Field'));
                     drawStats(document.getElementById('player2Stats'), cmd.aliveShips, document.getElementById('player2StatsTitleSpan'), 'ФЛОТ');
                     break;
                 case 'FIRE_RESULT':
