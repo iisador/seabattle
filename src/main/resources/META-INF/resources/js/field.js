@@ -172,7 +172,7 @@ class Field {
     }
 
     isFieldBlock(e) {
-        return e && e.id && e.parentElement === this.#battlefieldDiv && /^\w*\|b_\d_\d/.test(e.id);
+        return e && e.id && e.parentElement === this.#battlefieldDiv && /^\w*\|b_\d+_\d+/.test(e.id);
     }
 
     isEmptyFieldBlock(e) {
