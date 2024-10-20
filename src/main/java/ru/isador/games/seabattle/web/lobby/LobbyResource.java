@@ -11,7 +11,9 @@ import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.Context;
+import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.SecurityContext;
+import jakarta.ws.rs.core.UriBuilder;
 import ru.isador.games.seabattle.domain.config.Config;
 import ru.isador.games.seabattle.domain.config.GameConfigRepository;
 
@@ -31,10 +33,14 @@ public class LobbyResource {
     @Blocking
     @Produces("text/html")
     @RolesAllowed("user")
-    public TemplateInstance lobby(@Context SecurityContext securityContext) {
-        List<Config> configs = gameConfigRepository.listPredefined();
-        return lobby.data("playerName", securityContext.getUserPrincipal().getName())
-                    .data("gameConfigList", convert(configs));
+    public Object lobby(@Context SecurityContext securityContext) {
+        if (securityContext.getUserPrincipal() != null) {
+            List<Config> configs = gameConfigRepository.listPredefined();
+            return lobby.data("playerName", securityContext.getUserPrincipal().getName())
+                        .data("gameConfigList", convert(configs));
+        }
+
+        return Response.seeOther(UriBuilder.fromUri("/hello").build()).build();
     }
 
     private List<GameConfView> convert(List<Config> gamesConfig) {

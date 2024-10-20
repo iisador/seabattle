@@ -9,34 +9,61 @@
 </head>
 <body>
 <script>
-    function login() {
-        // Create an object to represent the form data
-        const formData = new URLSearchParams();
-        formData.append("j_username", document.getElementById("username").value);
-        formData.append("j_password", document.getElementById("password").value);
 
-        // Make an HTTP POST request using fetch against j_security_check endpoint
-        fetch("j_security_check", {
-            method: "POST",
-            body: formData,
-            headers: {
-                "Content-Type": "application/x-www-form-urlencoded",
-            },
-        }).then((response) => {
-            if (response.status === 200) {
-                window.location.replace("/lobby");
-            } else {
-                register();
-            }
-        }).catch((error) => {
-            printError('Небольшие технические чоколатки: ' + error);
-        });
+    function validate(username, password) {
+        if (!username || /^\s*$/.test(username)) {
+            printError('Ну нормальное имя введи');
+            return false;
+        }
+
+        if (username.length > 50) {
+            printError('Длинноватый логин. 50 символов обычно достаточно');
+            return false;
+        }
+
+        if (!password || /^\s*$/.test(password)) {
+            printError('Ну пароль придумай человеческий');
+            return false;
+        }
+
+        if (password.length > 150) {
+            printError('Ну и пароль. Зачем такой длинный-то?)) 150 символов хватит');
+            return false;
+        }
+
+        return true;
     }
 
-    function register() {
+    function login() {
         let username = document.getElementById("username").value;
         let password = document.getElementById("password").value;
 
+        if (validate(username, password)) {
+            // Create an object to represent the form data
+            const formData = new URLSearchParams();
+            formData.append("j_username", username);
+            formData.append("j_password", password);
+
+            // Make an HTTP POST request using fetch against j_security_check endpoint
+            fetch("j_security_check", {
+                method: "POST",
+                body: formData,
+                headers: {
+                    "Content-Type": "application/x-www-form-urlencoded",
+                },
+            }).then((response) => {
+                if (response.status === 200) {
+                    window.location.replace("/lobby");
+                } else {
+                    register(username, password);
+                }
+            }).catch((error) => {
+                printError('Небольшие технические чоколатки: ' + error);
+            });
+        }
+    }
+
+    function register(username, password) {
         fetch("hello", {
             method: "POST",
             body: JSON.stringify({ username: username, password: password }),
@@ -84,7 +111,7 @@
         <span class="bigTitle">Добро пожаловать в морской бой!</span>
         <span>Вводи ниже логин/пароль и проходи в лобби. (Пароль только запомни, я не умею их восстанавливать)</span>
     </div>
-    <div id="errorWrapper"></div>
+    <div id="errorWrapper" class="errorText"></div>
     <div id="loginWrapper">
         <input type="text" placeholder="Логин" id="username" name="j_username" required>
     </div>

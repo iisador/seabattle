@@ -57,20 +57,10 @@ public class LobbySocket implements Serializable {
 
     @ConsumeEvent("gameBus")
     public void gameChanged(GamesGrid game) {
-        switch (game.getStatus()) {
-            case WAITING -> sessions.values()
-                                .forEach(s -> s.getAsyncRemote().sendText(toJson(
-                                    new ResponseGameChanged(game.getCreateTime(), game.getPlayers(), game.getConfigName(),
-                                        game.getStatus().toString(), game.getId().toString()))));
-            case PLAYING -> sessions.values()
-                                .forEach(s -> s.getAsyncRemote().sendText(toJson(
-                                    new ResponseGameChanged(game.getCreateTime(), game.getPlayers(), game.getConfigName(),
-                                        game.getStatus().toString(), game.getId().toString()))));
-            case FAILED, FINISHED -> sessions.values()
-                                         .forEach(s -> s.getAsyncRemote().sendText(toJson(
-                                             new ResponseGameChanged(game.getCreateTime(), game.getPlayers(), game.getConfigName(),
-                                                 game.getStatus().toString(), game.getId().toString()))));
-        }
+        sessions.values()
+            .forEach(s -> s.getAsyncRemote().sendText(toJson(
+                new ResponseGameChanged(game.getCreateTime(), game.getPlayers(), game.getConfigName(),
+                    game.getStatus().toString(), game.getId().toString()))));
     }
 
     @Inject
