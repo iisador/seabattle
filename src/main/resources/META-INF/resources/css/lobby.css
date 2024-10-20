@@ -210,8 +210,17 @@ div#shipConf {
     justify-content: center;
 }
 
-div#battlefieldLabel {
+span#battlefieldError {
     grid-row: 8;
+    grid-column-start: 1;
+    grid-column-end: 4;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+}
+
+div#battlefieldLabel {
+    grid-row: 9;
     grid-column: 1;
     display: flex;
     flex-direction: row;
@@ -220,7 +229,7 @@ div#battlefieldLabel {
 }
 
 div#battlefieldWrapper {
-    grid-row: 8;
+    grid-row: 9;
     grid-column-start: 2;
     display: flex;
     flex-direction: row;
@@ -228,7 +237,7 @@ div#battlefieldWrapper {
 }
 
 div#battlefieldButtons {
-    grid-row: 8;
+    grid-row: 9;
     grid-column: 3;
     display: flex;
     flex-direction: column;
@@ -237,7 +246,7 @@ div#battlefieldButtons {
 }
 
 div#configButtons {
-    grid-row: 9;
+    grid-row: 10;
     grid-column-start: 1;
     grid-column-end: 4;
     display: flex;

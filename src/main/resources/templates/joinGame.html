@@ -31,6 +31,10 @@
         playerField.drawField(document.getElementById('battlefieldWrapper'));
 
         document.getElementById('btnJoin').disabled = true;
+        document.getElementById('btnJoin').innerText = 'Надо расставить корабли';
+
+        const battlefieldErrorSpan = document.getElementById('battlefieldError');
+        battlefieldErrorSpan.innerText = '';
     }
 
     // Нет времени объяснять! Дублироваем код!
@@ -66,7 +70,10 @@
 
             if (playerMatrix.isFull()) {
                 document.getElementById('btnJoin').disabled = false;
-                return;
+                document.getElementById('btnJoin').innerText = 'ПОЕХАЛИ!';
+            } else {
+                const battlefieldErrorSpan = document.getElementById('battlefieldError');
+                battlefieldErrorSpan.innerText = 'Глупенький ИИ не смог расставить корабли';
             }
         }
     }
@@ -128,6 +135,7 @@
 
         if (playerMatrix.isFull()) {
             document.getElementById('btnJoin').disabled = false;
+            document.getElementById('btnJoin').innerText = 'ПОЕХАЛИ!';
         }
 
         drawingShip = 0;
@@ -165,6 +173,7 @@
                     <div id="shipLabel"><label for="ships">Набор кораблей</label></div>
                     <div id="shipConf"><input type="text" id="ships" name="ships" value="{SHIPS}" disabled></div>
 
+                    <span id="battlefieldError" class="errorText"></span>
                     <div id="battlefieldLabel"><label>Расстановка кораблей</label></div>
                     <div id="battlefieldWrapper"></div>
                     <div id="battlefieldButtons">
@@ -173,7 +182,7 @@
                     </div>
                     <div id="configButtons">
                         <button id="toLobby" class="standardBtn" type="button" onclick="window.location.replace('/lobby/')">Не, чет передумал</button>
-                        <button id="btnJoin" class="standardBtn" disabled onclick="joinGame()">ПОЕХАЛИ</button>
+                        <button id="btnJoin" class="standardBtn" disabled onclick="joinGame()">Надо расставить корабли</button>
                     </div>
                 </div>
             </div>
