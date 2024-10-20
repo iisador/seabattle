@@ -3,8 +3,6 @@ class Block {
     #blockDiv;
     #x;
     #y;
-
-    #xDisplay;
     #blockBasicClass;
 
     constructor(blockDiv, letters, blockBasicClass) {
@@ -15,7 +13,6 @@ class Block {
         const slices = blockDiv.id.split('_');
         this.#x = parseInt(slices[1]);
         this.#y = parseInt(slices[2]);
-        this.#xDisplay = letters.get(this.#x);
         this.#blockBasicClass = blockBasicClass;
     }
 
@@ -25,10 +22,6 @@ class Block {
 
     getY() {
         return this.#y;
-    }
-
-    getXDisplay() {
-        return this.#xDisplay;
     }
 
     mark() {
@@ -69,6 +62,12 @@ class Block {
         }
 
         return block;
+    }
+
+    wasFired() {
+        return this.#blockDiv.children.length > 0
+            || this.#blockDiv.childNodes.length > 0
+            || this.#blockDiv.className === 'enemyShip';
     }
 }
 
