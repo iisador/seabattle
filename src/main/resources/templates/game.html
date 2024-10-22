@@ -94,6 +94,18 @@
     }
 
     function gameFinished(winner, opponentField, matrix) {
+        if (!winner) {
+            chatMessage('', 'ОПА, ВРЕМЯ ВЫШЛО. НИЧЬЯ ПОЛУЧАЕТСЯ');
+            setTurn('НУУУ... НИЧЬЯ. ВРЕМЯ ВЫШЛО', 'xxx-large');
+            document.getElementById('leave').innerText = 'Просто вернуться в лобби';
+
+            enemyFieldBlocks = new Field(myShips.length, '33px', 'en');
+            enemyFieldBlocks.drawField(document.getElementById('enemyField'));
+            enemyFieldBlocks.drawShips(JSON.parse(opponentField), 'enemyShip');
+            enemyFieldBlocks.layoutBattlefield(matrix);
+            return;
+        }
+
         if (whoami() === winner) {
             chatMessage('', 'ПОЗДРАВЛЯМБА, ' + winner + ' ПОБЕЖДАЕТ!!!');
             setTurn('ПОБЕДА!!! УРА!!!', 'xxx-large');
@@ -174,6 +186,7 @@
         sendCommand('FIRE', { x: x, y: y, playerName: whoami() });
     }
 
+    // Это я тоже скомуниздил со стековерфлов
     function startTimer(duration, display) {
         let timer = duration, minutes, seconds;
         setInterval(function () {
@@ -281,6 +294,15 @@
                     gameStarted(cmd.turn, cmd.player1, cmd.player2);
                     break;
                 case 'GAME_FINISHED':
+                    if (!cmd.winner) {
+                        if (cmd.player1.name === whoami()) {
+                            gameFinished(cmd.winner, cmd.player2.field, cmd.player2.matrix);
+                        } else {
+                            gameFinished(cmd.winner, cmd.player1.field, cmd.player1.matrix);
+                        }
+                        break;
+                    }
+
                     if (cmd.winner === cmd.player1.name) {
                         gameFinished(cmd.winner, cmd.player1.field, cmd.player1.matrix);
                     } else {
