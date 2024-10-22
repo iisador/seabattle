@@ -116,6 +116,7 @@ div#timer {
     justify-content: center;
     flex-direction: column;
 }
+
 div#enemyFieldTitle {
     grid-row: 3;
     grid-column: 3;

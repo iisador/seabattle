@@ -139,7 +139,7 @@ public class GameWebSocket {
                                                                                                   .getAliveShips()))
                                                                 .toList();
                 if (players.size() > 1) {
-                    broadcastToGame(gameId, new ResponseViewerJoined(viewerName, players.get(0), players.get(1)));
+                    broadcastToGame(gameId, new ResponseViewerJoined(viewerName, players.get(0), players.get(1), gw.getRemainingTime()));
                 } else {
                     broadcastToGame(gameId, new ResponseViewerJoined(viewerName, players.get(0)));
                 }

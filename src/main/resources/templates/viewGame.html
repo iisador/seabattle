@@ -78,8 +78,13 @@
     }
 
     function gameFinished(winner, player1, player2) {
-        setTurn('ПОБЕДА ' + winner + ' УРА!!')
-        chatMessage('', 'ПОБЕДА ЗА, ' + winner + ' УРА!!!');
+        if (!winner) {
+            chatMessage('', 'ОПА, ВРЕМЯ ВЫШЛО. НИЧЬЯ ПОЛУЧАЕТСЯ');
+            setTurn('НУУУ... НИЧЬЯ. ВРЕМЯ ВЫШЛО');
+        } else {
+            setTurn('ПОБЕДА ' + winner + ' УРА!!')
+            chatMessage('', 'ПОБЕДА ЗА, ' + winner + ' УРА!!!');
+        }
 
         player1FieldBlocks = new Field(player1.matrix.length, blockSize, 'player1', false);
         player1FieldBlocks.drawField(document.getElementById('player1Field'));
@@ -146,7 +151,30 @@
         return max;
     }
 
-    function fireResult(attacker, opponent, x, y, result, matrix, stats) {
+    // Это я тоже скомуниздил со стековерфлов
+    // А потом скомуниздил сам у себя
+    function startTimer(duration, display) {
+        let timer = duration, minutes, seconds;
+        setInterval(function () {
+            minutes = parseInt(timer / 60, 10);
+            seconds = parseInt(timer % 60, 10);
+
+            minutes = minutes < 10 ? "0" + minutes : minutes;
+            seconds = seconds < 10 ? "0" + seconds : seconds;
+
+            display.textContent = minutes + ":" + seconds;
+
+            if (--timer < 0) {
+                timer = 0;
+            }
+        }, 1000);
+    }
+
+    function fireResult(attacker, opponent, x, y, result, matrix, stats, duration) {
+        if (duration) {
+            startTimer(duration, document.getElementById('countdown'));
+        }
+
         if (player1Name === attacker) {
             player2FieldBlocks = new Field(player1FieldBlocks.getFieldSize(), '33px', 'player2');
             player2FieldBlocks.drawField(document.getElementById('player2Field'));
@@ -211,8 +239,12 @@
                         drawStats(document.getElementById('player2Stats'), cmd.player2.ships, document.getElementById('player2StatsTitleSpan'), 'ФЛОТ');
                     }
 
-                    if(cmd.viewerName !== whoami()) {
+                    if (cmd.viewerName !== whoami()) {
                         chatMessage(cmd.viewerName + 'Присоединился посмотреть')
+                    }
+
+                    if (cmd.timeRemaining) {
+                        startTimer(cmd.timeRemaining, document.getElementById('countdown'));
                     }
                     break;
                 case 'PLAYER_JOINED':
@@ -225,7 +257,7 @@
                     drawStats(document.getElementById('player2Stats'), cmd.aliveShips, document.getElementById('player2StatsTitleSpan'), 'ФЛОТ');
                     break;
                 case 'FIRE_RESULT':
-                    fireResult(cmd.attacker, cmd.opponent, cmd.x, cmd.y, cmd.result, cmd.matrix, cmd.aliveShips);
+                    fireResult(cmd.attacker, cmd.opponent, cmd.x, cmd.y, cmd.result, cmd.matrix, cmd.aliveShips, cmd.gameDuration);
                     break;
                 case 'START_GAME':
                     gameStarted(cmd.turn, cmd.player1, cmd.player2);
@@ -286,6 +318,10 @@
             </div>
             <div id="player1Field"></div>
 
+            <div id="timer">
+                <span class="midTitle">До конца игры:</span>
+                <span id="countdown" class="midTitle">00:00</span>
+            </div>
             <div id="player2FieldTitle">
                 <span id="player2TitleSpan" class="midTitle"></span>
             </div>

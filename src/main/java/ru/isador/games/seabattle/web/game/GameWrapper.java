@@ -1,6 +1,8 @@
 package ru.isador.games.seabattle.web.game;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -72,10 +74,6 @@ public class GameWrapper {
         return commands;
     }
 
-    public Game getGame() {
-        return game;
-    }
-
     public PlayerWrapper getFirstPlayer() {
         return players.keySet().stream()
                    .map(players::get)
@@ -83,8 +81,28 @@ public class GameWrapper {
                    .orElse(null);
     }
 
+    public Game getGame() {
+        return game;
+    }
+
     public String getPlayersString() {
         return String.join(" vs ", players.keySet());
+    }
+
+    public long getRemainingTime() {
+        if (firstFireTime == null) {
+            return game.getConfig().getGameDuration().get(ChronoUnit.SECONDS);
+        }
+
+        return Duration.between(LocalDateTime.now(), getFirstFireTime()).get(ChronoUnit.SECONDS);
+    }
+
+    public LocalDateTime getFirstFireTime() {
+        return firstFireTime;
+    }
+
+    public void setFirstFireTime(LocalDateTime firstFireTime) {
+        this.firstFireTime = firstFireTime;
     }
 
     public List<String> getSortedPlayerNames() {
@@ -106,13 +124,5 @@ public class GameWrapper {
 
     public void setFinished(boolean finished) {
         this.finished = finished;
-    }
-
-    public LocalDateTime getFirstFireTime() {
-        return firstFireTime;
-    }
-
-    public void setFirstFireTime(LocalDateTime firstFireTime) {
-        this.firstFireTime = firstFireTime;
     }
 }
