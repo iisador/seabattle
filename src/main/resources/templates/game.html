@@ -94,6 +94,7 @@
     }
 
     function gameFinished(winner, opponentField, matrix) {
+        isGameFinished = true;
         if (!winner) {
             chatMessage('', 'ОПА, ВРЕМЯ ВЫШЛО. НИЧЬЯ ПОЛУЧАЕТСЯ');
             setTurn('НУУУ... НИЧЬЯ. ВРЕМЯ ВЫШЛО', 'xxx-large');
@@ -121,7 +122,6 @@
             enemyFieldBlocks.layoutBattlefield(matrix);
         }
 
-        isGameFinished = true;
         document.removeEventListener('click', clickListener);
     }
 

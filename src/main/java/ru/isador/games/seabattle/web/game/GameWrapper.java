@@ -94,7 +94,8 @@ public class GameWrapper {
             return game.getConfig().getGameDuration().get(ChronoUnit.SECONDS);
         }
 
-        return Duration.between(LocalDateTime.now(), getFirstFireTime()).get(ChronoUnit.SECONDS);
+        long gameTime = Duration.between(getFirstFireTime(), LocalDateTime.now()).get(ChronoUnit.SECONDS);
+        return game.getConfig().getGameDuration().get(ChronoUnit.SECONDS) - gameTime;
     }
 
     public LocalDateTime getFirstFireTime() {
