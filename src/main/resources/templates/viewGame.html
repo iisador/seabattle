@@ -153,7 +153,8 @@
 
     // Это я тоже скомуниздил со стековерфлов
     // А потом скомуниздил сам у себя
-    function startTimer(duration, display) {
+    function startTimer(duration) {
+        const display = document.getElementById('countdown');
         let timer = duration, minutes, seconds;
         setInterval(function () {
             minutes = parseInt(timer / 60, 10);
@@ -172,7 +173,7 @@
 
     function fireResult(attacker, opponent, x, y, result, matrix, stats, duration) {
         if (duration) {
-            startTimer(duration, document.getElementById('countdown'));
+            startTimer(duration);
         }
 
         if (player1Name === attacker) {
@@ -244,7 +245,7 @@
                     }
 
                     if (cmd.timeRemaining) {
-                        startTimer(cmd.timeRemaining, document.getElementById('countdown'));
+                        startTimer(cmd.timeRemaining);
                     }
                     break;
                 case 'PLAYER_JOINED':

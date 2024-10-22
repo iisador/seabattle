@@ -187,7 +187,8 @@
     }
 
     // Это я тоже скомуниздил со стековерфлов
-    function startTimer(duration, display) {
+    function startTimer(duration) {
+        const display = document.getElementById('countdown');
         let timer = duration, minutes, seconds;
         setInterval(function () {
             minutes = parseInt(timer / 60, 10);
@@ -206,7 +207,7 @@
 
     function fireResult(attacker, opponent, x, y, result, matrix, stats, duration) {
         if (duration) {
-            startTimer(duration, document.getElementById('countdown'));
+            startTimer(duration);
         }
 
         if (attacker === whoami()) {
