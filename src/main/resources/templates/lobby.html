@@ -198,18 +198,25 @@
 
     // Ваще в тупую расстанавливаем.
     // Прям как оценки требований делаем кароче.
-    function randomFill(tries) {
-        for (let i = 0; i < tries; i++) {
-            resetGame();
+    function randomFill() {
+        resetGame();
+        const sortedDeckCount = Array.from(playerMatrix.getShipConfig().keys()).sort().reverse();
 
-            const sortedDeckCount = Array.from(playerMatrix.getShipConfig().keys()).sort().reverse();
+        let resetCount = 1989;
+        while(!playerMatrix.isFull() || resetCount < 0) {
+            resetGame();
+            resetCount = resetCount - 1;
 
             for (let deckCount of sortedDeckCount) {
+                if(!playerMatrix.hasFreeCells(deckCount)) {
+                    break;
+                }
+
                 for (let i = 0; i < playerMatrix.getShipConfig().get(deckCount); i++) {
                     let placed = false;
                     let retryCount = 42; // Ага ага, это магия!!!
                     while (!placed && retryCount > 0) {
-                        const direction = this.random(2) ? 'horizontal' : 'vertical';
+                        const direction = random(2) ? 'horizontal' : 'vertical';
                         const x = this.random(playerMatrix.getSize());
                         const y = this.random(playerMatrix.getSize());
                         if (playerMatrix.canPlaceShip(deckCount, x, y, direction)) {
@@ -225,9 +232,7 @@
             if (playerMatrix.isFull()) {
                 document.getElementById('btnNewGame').disabled = false;
                 document.getElementById('btnNewGame').innerText = 'ПОЕХАЛИ!';
-            } else {
-                const battlefieldErrorSpan = document.getElementById('battlefieldError');
-                battlefieldErrorSpan.innerText = 'Глупенький ИИ не смог расставить корабли. Нажми кубик ещё раз.';
+                return;
             }
         }
     }
@@ -409,7 +414,7 @@
                     <div id="battlefieldWrapper"></div>
                     <div id="battlefieldButtons">
                         <div id="btnReset" class="btnReset" onclick="resetGame()"></div>
-                        <div id="btnFill" class="btnRandom" onclick="randomFill(73)"></div>
+                        <div id="btnFill" class="btnRandom" onclick="randomFill()"></div>
                     </div>
                     <div id="configButtons">
                         <button id="btnNewGame" class="standardBtn" disabled onclick="newGame()">Надо расставить корабли</button>

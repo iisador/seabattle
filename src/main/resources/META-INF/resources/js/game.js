@@ -61,6 +61,19 @@ class Matrix {
         return this.#shipConfig;
     }
 
+    hasFreeCells(deckCount) {
+        for (let i = 0; i < this.#size; i++) {
+            for (let j = 0; j < this.#size; j++) {
+                if (this.canPlaceShip(deckCount, i, j, 'horizontal')
+                    || this.canPlaceShip(deckCount, i, j, 'vertical')) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
     canPlaceShip(deckCount, x, y, direction) {
         if (!this.#shipConfig.get(deckCount)) {
             return false;
