@@ -78,6 +78,7 @@
     }
 
     function gameFinished(winner, player1, player2) {
+        clearInterval(intervalId);
         if (!winner) {
             chatMessage('', 'ОПА, ВРЕМЯ ВЫШЛО. НИЧЬЯ ПОЛУЧАЕТСЯ');
             setTurn('НУУУ... НИЧЬЯ. ВРЕМЯ ВЫШЛО');
@@ -151,12 +152,13 @@
         return max;
     }
 
+    let intervalId;
     // Это я тоже скомуниздил со стековерфлов
     // А потом скомуниздил сам у себя
     function startTimer(duration) {
         const display = document.getElementById('countdown');
         let timer = duration, minutes, seconds;
-        setInterval(function () {
+        return setInterval(function () {
             minutes = parseInt(timer / 60, 10);
             seconds = parseInt(timer % 60, 10);
 
@@ -173,7 +175,7 @@
 
     function fireResult(attacker, opponent, x, y, result, matrix, stats, duration) {
         if (duration) {
-            startTimer(duration);
+            intervalId = startTimer(duration);
         }
 
         if (player1Name === attacker) {
@@ -245,7 +247,7 @@
                     }
 
                     if (cmd.timeRemaining) {
-                        startTimer(cmd.timeRemaining);
+                        intervalId = startTimer(cmd.timeRemaining);
                     }
                     break;
                 case 'PLAYER_JOINED':

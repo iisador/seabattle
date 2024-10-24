@@ -94,6 +94,7 @@
     }
 
     function gameFinished(winner, opponentField, matrix) {
+        clearInterval(intervalId);
         isGameFinished = true;
         if (!winner) {
             chatMessage('', 'ОПА, ВРЕМЯ ВЫШЛО. НИЧЬЯ ПОЛУЧАЕТСЯ');
@@ -186,11 +187,12 @@
         sendCommand('FIRE', { x: x, y: y, playerName: whoami() });
     }
 
+    let intervalId;
     // Это я тоже скомуниздил со стековерфлов
     function startTimer(duration) {
         const display = document.getElementById('countdown');
         let timer = duration, minutes, seconds;
-        setInterval(function () {
+        return setInterval(function () {
             minutes = parseInt(timer / 60, 10);
             seconds = parseInt(timer % 60, 10);
 
@@ -207,7 +209,7 @@
 
     function fireResult(attacker, opponent, x, y, result, matrix, stats, duration) {
         if (duration) {
-            startTimer(duration);
+            intervalId = startTimer(duration);
         }
 
         if (attacker === whoami()) {
