@@ -207,7 +207,7 @@
             for (let deckCount of sortedDeckCount) {
                 for (let i = 0; i < playerMatrix.getShipConfig().get(deckCount); i++) {
                     let placed = false;
-                    let retryCount = 20;
+                    let retryCount = 42; // Ага ага, это магия!!!
                     while (!placed && retryCount > 0) {
                         const direction = this.random(2) ? 'horizontal' : 'vertical';
                         const x = this.random(playerMatrix.getSize());
@@ -409,7 +409,7 @@
                     <div id="battlefieldWrapper"></div>
                     <div id="battlefieldButtons">
                         <div id="btnReset" class="btnReset" onclick="resetGame()"></div>
-                        <div id="btnFill" class="btnRandom" onclick="randomFill(50)"></div>
+                        <div id="btnFill" class="btnRandom" onclick="randomFill(73)"></div>
                     </div>
                     <div id="configButtons">
                         <button id="btnNewGame" class="standardBtn" disabled onclick="newGame()">Надо расставить корабли</button>
