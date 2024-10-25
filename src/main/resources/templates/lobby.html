@@ -151,6 +151,13 @@
             fieldErrorSpan.style.visibility = 'visible';
         }
 
+        const ships = document.getElementById('ships');
+        if(!ships.value) {
+            hasErrors = true;
+            fieldErrorSpan.innerText = 'Флот то пустой!';
+            fieldErrorSpan.style.visibility = 'visible';
+        }
+
         // семь бед - один ресет
         if (!hasErrors) {
             resetGame();
@@ -199,40 +206,42 @@
     // Ваще в тупую расстанавливаем.
     // Прям как оценки требований делаем кароче.
     function randomFill() {
-        resetGame();
-        const sortedDeckCount = Array.from(playerMatrix.getShipConfig().keys()).sort().reverse();
-
-        let resetCount = 1989;
-        while(!playerMatrix.isFull() || resetCount < 0) {
+        if (/\d+x\d+/.test(document.getElementById('ships').value)) {
             resetGame();
-            resetCount = resetCount - 1;
+            const sortedDeckCount = Array.from(playerMatrix.getShipConfig().keys()).sort().reverse();
 
-            for (let deckCount of sortedDeckCount) {
-                if(!playerMatrix.hasFreeCells(deckCount)) {
-                    break;
-                }
+            let resetCount = 1989;
+            while (!playerMatrix.isFull() || resetCount < 0) {
+                resetGame();
+                resetCount = resetCount - 1;
 
-                for (let i = 0; i < playerMatrix.getShipConfig().get(deckCount); i++) {
-                    let placed = false;
-                    let retryCount = 42; // Ага ага, это магия!!!
-                    while (!placed && retryCount > 0) {
-                        const direction = random(2) ? 'horizontal' : 'vertical';
-                        const x = this.random(playerMatrix.getSize());
-                        const y = this.random(playerMatrix.getSize());
-                        if (playerMatrix.canPlaceShip(deckCount, x, y, direction)) {
-                            playerMatrix.placeShip(deckCount, x, y, direction);
-                            playerField.drawShip(deckCount, x, y, direction);
-                            placed = true;
+                for (let deckCount of sortedDeckCount) {
+                    if (!playerMatrix.hasFreeCells(deckCount)) {
+                        break;
+                    }
+
+                    for (let i = 0; i < playerMatrix.getShipConfig().get(deckCount); i++) {
+                        let placed = false;
+                        let retryCount = 42; // Ага ага, это магия!!!
+                        while (!placed && retryCount > 0) {
+                            const direction = random(2) ? 'horizontal' : 'vertical';
+                            const x = this.random(playerMatrix.getSize());
+                            const y = this.random(playerMatrix.getSize());
+                            if (playerMatrix.canPlaceShip(deckCount, x, y, direction)) {
+                                playerMatrix.placeShip(deckCount, x, y, direction);
+                                playerField.drawShip(deckCount, x, y, direction);
+                                placed = true;
+                            }
+                            retryCount--;
                         }
-                        retryCount--;
                     }
                 }
-            }
 
-            if (playerMatrix.isFull()) {
-                document.getElementById('btnNewGame').disabled = false;
-                document.getElementById('btnNewGame').innerText = 'ПОЕХАЛИ!';
-                return;
+                if (playerMatrix.isFull()) {
+                    document.getElementById('btnNewGame').disabled = false;
+                    document.getElementById('btnNewGame').innerText = 'ПОЕХАЛИ!';
+                    return;
+                }
             }
         }
     }

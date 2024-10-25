@@ -51,8 +51,12 @@ class Matrix {
         const ships = shipConfig.split(';');
         this.#shipConfig = new Map();
         for (const ship of ships) {
-            const splits = ship.split('x')
-            this.#shipConfig.set(parseInt(splits[0]), parseInt(splits[1]));
+            const splits = ship.split('x');
+            if(!this.#shipConfig.get(parseInt(splits[0]))) {
+                this.#shipConfig.set(parseInt(splits[0]), parseInt(splits[1]));
+            } else {
+                this.#shipConfig.set(parseInt(splits[0]), this.#shipConfig.get(parseInt(splits[0])) + parseInt(splits[1]));
+            }
             this.#ships.set(parseInt(splits[0]), 0);
         }
     }
