@@ -67,3 +67,17 @@ body {
 .errorText {
     color: #e54b01;
 }
+
+.modal-window {
+    position: absolute;
+    z-index: 100;
+    background-color: #fff;
+    border-radius: 4px;
+    transition: all .18s ease-in-out;
+    border: solid;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    align-items: center;
+    visibility: hidden;
+}

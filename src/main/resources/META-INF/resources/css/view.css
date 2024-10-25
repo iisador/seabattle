@@ -184,22 +184,3 @@ div#chatBottom {
     grid-template-rows: auto;
     grid-template-columns: auto 30px;
 }
-
-.modal-window {
-    position: fixed;
-    z-index: 100;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -80%) scale(.9);
-    max-width: 95%;
-    min-height: 200px;
-    background-color: #fff;
-    border-radius: 4px;
-    transition: all .18s ease-in-out;
-    border: solid;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-around;
-    align-items: center;
-    visibility: hidden;
-}
