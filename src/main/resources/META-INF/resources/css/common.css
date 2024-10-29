@@ -80,4 +80,6 @@ body {
     justify-content: space-around;
     align-items: center;
     visibility: hidden;
+    max-height: 800px;
+    overflow-y: auto;
 }

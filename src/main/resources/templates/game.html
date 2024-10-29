@@ -110,12 +110,12 @@
 
         if (whoami() === winner) {
             chatMessage('', 'ПОЗДРАВЛЯМБА, ' + winner + ' ПОБЕЖДАЕТ!!!');
-            setTurn('ПОБЕДА!!! УРА!!!', 'xxx-large');
+            setTurn('УРА! Поздравляем с победой', 'xxx-large');
             document.getElementById('leave').innerText = 'Победно вернуться в лобби';
         } else {
             chatMessage('', 'ЭХ, ' + whoami() + ', В СЛЕДУЮЩИЙ РАЗ ПОВЕЗЕТ!');
-            setTurn('ЭХ, НЕ СУДЬБА, ПОБЕДА ЗА ' + winner, 'xxx-large');
-            document.getElementById('leave').innerText = 'Приковылять обратно в лобби';
+            setTurn('Победил ' + winner + '! Поздравляем!', 'xxx-large');
+            document.getElementById('leave').innerText = 'Вернуться к выбору игры';
 
             enemyFieldBlocks = new Field(myShips.length, '33px', 'en');
             enemyFieldBlocks.drawField(document.getElementById('enemyField'));
@@ -138,7 +138,7 @@
 
     function drawStats(div, stats, shipClass) {
         const statsTitle = (shipClass === 'ship') ? document.getElementById('myStatsTitleSpan'): document.getElementById('enemyStatsTitleSpan');
-        statsTitle.innerText = (shipClass === 'ship') ? 'НАШ ФЛОТ': 'А ЭТО ИХ';
+        statsTitle.innerText = (shipClass === 'ship') ? 'Ваш флот': 'Флот противника';
 
         for (let i = 0; i < div.children.length; i++) {
             div.removeChild(div.children[i]);
@@ -372,7 +372,7 @@
 
             <div id="timer">
                 <span class="midTitle">До конца игры:</span>
-                <span id="countdown" class="midTitle">00:00</span>
+                <span id="countdown" class="bigTitle">00:00</span>
             </div>
             <div id="enemyFieldTitle">
                 <span id="enemyTitleSpan" class="midTitle"></span>
@@ -394,13 +394,13 @@
             </div>
 
             <div id="bottomButtons">
-                <button id="leave" class="standardBtn" onclick="leaveGame()">Мне надоело</button>
+                <button id="leave" class="standardBtn" onclick="leaveGame()">Завершить игру</button>
             </div>
 
             <div id="chat">
-                <textarea id="chatLog" cols="120" rows="20" readonly></textarea>
+                <textarea id="chatLog" cols="120" rows="20" readonly style="font-size: 16px; font-weight: bolder;"></textarea>
             </div>
-            <div id="chatBottom">
+            <div id="chatBottom" style="visibility: hidden;">
                 <input type="text" id="chatInput">
                 <div id="btnSend" class="btnChat" onclick="sendToChat()"></div>
             </div>

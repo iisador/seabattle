@@ -121,10 +121,10 @@
                 const gameId = await response.text();
                 window.location.replace("/games/" + gameId);
             } else {
-                alert("Тут надо вставить алярму что регистрация не прошла и вывести ошибку");
+                alert("Небольшие технические чоколадки. Попробуйте создать игру заново" + response);
             }
         }).catch((error) => {
-            console.error(error);
+            alert("Небольшие технические чоколадки. " + error);
         });
     }
 
@@ -239,7 +239,7 @@
 
                 if (playerMatrix.isFull()) {
                     document.getElementById('btnNewGame').disabled = false;
-                    document.getElementById('btnNewGame').innerText = 'ПОЕХАЛИ!';
+                    document.getElementById('btnNewGame').innerText = 'На абордаж!';
                     return;
                 }
             }
@@ -303,19 +303,11 @@
 
         if (playerMatrix.isFull()) {
             document.getElementById('btnNewGame').disabled = false;
-            document.getElementById('btnNewGame').innerText = 'ПОЕХАЛИ!';
+            document.getElementById('btnNewGame').innerText = 'На абордаж!';
         }
 
         drawingShip = 0;
     }, false);
-
-    function sleep(milliseconds) {
-        const date = Date.now();
-        let currentDate = Date.now();
-        while (currentDate - date < milliseconds) {
-            currentDate = Date.now();
-        }
-    }
 
     function showHelp() {
         document.getElementById('gameWrapper').style.filter = 'grayscale(1)';
@@ -395,8 +387,7 @@
     <div id="centerWrapper">
         <div id="gameWrapper">
             <div id="title">
-                <span class="bigTitle">Добро пожаловать в лобби, {playerName}</span>
-                <span style="font-size: medium;">Перед началом игры лучше прочитать <span style="font-style: italic;text-decoration: underline; cursor: pointer" onclick="showHelp()">справку.</span></span>
+                <span class="bigTitle">Семь футов под килем, {playerName}</span>
             </div>
             <div id="newGameWrapper">
                 <div id="gameConfig">
@@ -438,7 +429,7 @@
             </div>
             <div id="waitingGamesWrapper">
                 <span class="midTitle">Текущие игры</span>
-                <table id="gamesTable">
+                <table id="gamesTable" style="width: 100%">
                     <thead>
                     <tr>
                         <th>Создана</th>
@@ -451,6 +442,7 @@
                     </tbody>
                 </table>
             </div>
+            <span style="font-size: medium;">Если не знакомы с правилами игры, почитайте <span style="font-style: italic;text-decoration: underline; cursor: pointer" onclick="showHelp()">справку.</span></span>
         </div>
     </div>
     <div id="rightWrapper">
@@ -481,14 +473,15 @@
                         <li>Очистка поля, осуществляется кнопкой <img class="btnReset">.</li>
                         <li><img src="/img/placeExample.gif"></li>
                     </ul>
-                    <li>После расстановки кораблей будет доступна кнопка "ПОЕХАЛИ". Она и создаёт новую игру</li>
+                    <li>После расстановки кораблей будет доступна кнопка "На абордаж!". Она и создаёт новую игру</li>
                     <li>После создания игры она появится в списке текущих игр в лобби, и любой игрок сможет присоединиться к ней.</li>
                     <li>Для присоединиться к игре надо нажать кнопку <img class="btnJoin">, расставить корабли в соответствии с настройками игры и
-                        также нажать кнопку "ПОЕХАЛИ".
+                        также нажать кнопку "На абордаж!".
                     </li>
                     <li>Присоединиться к игре в качестве наблюдателя можно по кнопке <img class="btnView">.</li>
                     <li>Вначале игра находится в режиме ожидания соперника. После присоединения соперника заголовок сменится и, под ним будет
-                        указано имя атакующего. <img src="/img/waitingExample.gif"></li>
+                        указано имя атакующего.</li>
+                    <li><img src="/img/waitingExample.gif"></li>
                     <li>Общение соперников и зрителей организовано в чате игры. Он расположен в самом низу.</li>
                     <li>После окончания игры проигравшему сопернику покажется расстановка кораблей противника.</li>
                     <li>При выходе из игры - победа автоматически присваивается противнику.</li>
@@ -497,7 +490,7 @@
             </div>
             <div id="rightWrapper"></div>
             <div id="bottomWrapper">
-                <button id="toLobby" class="standardBtn" onclick="hideHelp()">яснопонятно, скрыть справку</button>
+                <button id="toLobby" class="standardBtn" onclick="hideHelp()">скрыть справку</button>
             </div>
         </div>
     </div>
