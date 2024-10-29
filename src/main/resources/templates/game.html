@@ -114,7 +114,7 @@
             document.getElementById('leave').innerText = 'Победно вернуться в лобби';
         } else {
             chatMessage('', 'ЭХ, ' + whoami() + ', В СЛЕДУЮЩИЙ РАЗ ПОВЕЗЕТ!');
-            setTurn('Победил ' + winner + '! Поздравляем!', 'xxx-large');
+            setTurn('Победил ' + winner + '! Поздравляем! Попытаете счастья еще раз?', 'xxx-large');
             document.getElementById('leave').innerText = 'Вернуться к выбору игры';
 
             enemyFieldBlocks = new Field(myShips.length, '33px', 'en');

@@ -100,7 +100,7 @@ div#bottomWrapper {
 
 div#gameConfig {
     display: grid;
-    grid-template-rows: auto auto auto auto auto auto auto auto auto;
+    grid-template-rows: auto auto auto auto;
     grid-template-columns: auto auto auto;
     gap: 10px;
     border-bottom: solid;
@@ -131,96 +131,8 @@ div#gameTypeConf {
     justify-content: center;
 }
 
-div#bordersLabel {
-    grid-row: 3;
-    grid-column: 1;
-    display: flex;
-    flex-direction: row;
-    justify-content: flex-end;
-}
-
-div#bordersConf {
-    grid-row: 3;
-    grid-column-start: 2;
-    grid-column-end: 3;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: flex-start;
-}
-
-div#cornersLabel {
-    grid-row: 4;
-    grid-column: 1;
-    display: flex;
-    flex-direction: row;
-    justify-content: flex-end;
-}
-
-div#cornersConf {
-    grid-row: 4;
-    grid-column-start: 2;
-    grid-column-end: 3;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: flex-start;
-}
-
-span#fieldError {
-    grid-row: 5;
-    grid-column-start: 1;
-    grid-column-end: 4;
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-}
-
-div#fieldLabel {
-    grid-row: 6;
-    grid-column: 1;
-    display: flex;
-    flex-direction: row;
-    justify-content: flex-end;
-}
-
-div#fieldConf {
-    grid-row: 6;
-    grid-column-start: 2;
-    grid-column-end: 3;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-}
-
-div#shipLabel {
-    grid-row: 7;
-    grid-column: 1;
-    display: flex;
-    flex-direction: row;
-    justify-content: flex-end;
-}
-
-div#shipConf {
-    grid-row: 7;
-    grid-column-start: 2;
-    grid-column-end: 3;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-}
-
-span#battlefieldError {
-    grid-row: 8;
-    grid-column-start: 1;
-    grid-column-end: 4;
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-}
-
 div#battlefieldLabel {
-    grid-row: 9;
+    grid-row: 3;
     grid-column: 1;
     display: flex;
     flex-direction: row;
@@ -229,7 +141,7 @@ div#battlefieldLabel {
 }
 
 div#battlefieldWrapper {
-    grid-row: 9;
+    grid-row: 3;
     grid-column-start: 2;
     display: flex;
     flex-direction: row;
@@ -237,7 +149,7 @@ div#battlefieldWrapper {
 }
 
 div#battlefieldButtons {
-    grid-row: 9;
+    grid-row: 3;
     grid-column: 3;
     display: flex;
     flex-direction: column;
@@ -246,7 +158,7 @@ div#battlefieldButtons {
 }
 
 div#configButtons {
-    grid-row: 10;
+    grid-row: 4;
     grid-column-start: 1;
     grid-column-end: 4;
     display: flex;

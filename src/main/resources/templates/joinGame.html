@@ -165,18 +165,10 @@
             <div id="newGameWrapper">
                 <div id="gameConfig">
                     <div id="gameConfigTitle"><span class="midTitle">Расположи свой флот</span></div>
-
-                    <div id="bordersLabel"><label for="bordersAllowed">Касание границ</label></div>
-                    <div id="bordersConf"><input type="checkbox" id="bordersAllowed" name="bordersAllowed" {#if BORDERS_ALLOWED}checked {/if}disabled></div>
-
-                    <div id="cornersLabel"><label for="cornersAllowed">Касание углов кораблей</label></div>
-                    <div id="cornersConf"><input type="checkbox" id="cornersAllowed" name="cornersAllowed" {#if CORNERS_ALLOWED}checked {/if}disabled></div>
-
-                    <div id="fieldLabel"><label for="fieldSize">Размер поля</label></div>
-                    <div id="fieldConf"><input type="text" id="fieldSize" name="fieldSize" value="{FIELD_SIZE}" disabled></div>
-
-                    <div id="shipLabel"><label for="ships">Набор кораблей</label></div>
-                    <div id="shipConf"><input type="text" id="ships" name="ships" value="{SHIPS}" disabled></div>
+                    <input type="hidden" id="bordersAllowed" name="bordersAllowed" {#if BORDERS_ALLOWED}checked {/if}disabled>
+                    <input type="hidden" id="cornersAllowed" name="cornersAllowed" {#if CORNERS_ALLOWED}checked {/if}disabled>
+                    <input type="hidden" id="fieldSize" name="fieldSize" value="{FIELD_SIZE}" disabled>
+                    <input type="hidden" id="ships" name="ships" value="{SHIPS}" disabled>
 
                     <span id="battlefieldError" class="errorText"></span>
                     <div id="battlefieldLabel"><label>Расстановка кораблей</label></div>

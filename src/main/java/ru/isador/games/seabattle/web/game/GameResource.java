@@ -2,6 +2,7 @@ package ru.isador.games.seabattle.web.game;
 
 import java.util.UUID;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import io.quarkus.qute.Template;
 import io.quarkus.qute.TemplateInstance;
 import io.smallrye.common.annotation.Blocking;
@@ -21,7 +22,10 @@ import jakarta.ws.rs.core.UriBuilder;
 import ru.isador.games.seabattle.domain.game.Game;
 import ru.isador.games.seabattle.domain.game.GameStatus;
 import ru.isador.games.seabattle.domain.player.Player;
+import ru.isador.games.seabattle.services.game.FleetValidationException;
+import ru.isador.games.seabattle.services.game.FleetValidator;
 import ru.isador.games.seabattle.services.game.GameService;
+import ru.isador.games.seabattle.services.game.NewGameException;
 
 @Path("/games")
 @RolesAllowed("user")
@@ -32,24 +36,32 @@ public class GameResource {
     private final Template viewGame;
     private final Template joinGame;
     private final EventBus eventBus;
+    private final FleetValidator fleetValidator;
 
     @Inject
-    public GameResource(GameService gameService, Template game, Template viewGame, Template joinGame, EventBus eventBus) {
+    public GameResource(GameService gameService, Template game, Template viewGame, Template joinGame, EventBus eventBus,
+        FleetValidator fleetValidator) {
         this.gameService = gameService;
         this.game = game;
         this.viewGame = viewGame;
         this.joinGame = joinGame;
         this.eventBus = eventBus;
+        this.fleetValidator = fleetValidator;
     }
 
     @POST
     @Blocking
     @Produces("text/plain")
-    public UUID createGame(@Context SecurityContext securityContext, NewGameResource newGameResource) {
+    public Object createGame(@Context SecurityContext securityContext, NewGameResource newGameResource) {
         String playerName = securityContext.getUserPrincipal().getName();
-        Game g = gameService.newGame(playerName, newGameResource.field(), newGameResource.config());
-        eventBus.publish("gameBus", gameService.getGameGrid(g.getId()));
-        return g.getId();
+
+        try {
+            Game g = gameService.newGame(playerName, newGameResource.field(), newGameResource.config());
+            eventBus.publish("gameBus", gameService.getGameGrid(g.getId()));
+            return g.getId();
+        } catch (NewGameException | FleetValidationException | JsonProcessingException e) {
+            return Response.status(Response.Status.BAD_REQUEST).build();
+        }
     }
 
     @GET
@@ -57,6 +69,13 @@ public class GameResource {
     @Path("/{id}")
     public Object getGame(@Context SecurityContext securityContext, @PathParam("id") UUID id, @QueryParam("field") String field) {
         Game g = gameService.getGame(id);
+        try {
+            fleetValidator.validate(g.getConfig(), field);
+        } catch (FleetValidationException e) {
+            return Response.status(Response.Status.BAD_REQUEST).build();
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
         if (g.getStatus().equals(GameStatus.FAILED) || g.getStatus().equals(GameStatus.FINISHED)) {
             return Response.seeOther(UriBuilder.fromPath("/lobby").build()).build();
         }

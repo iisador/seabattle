@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import io.quarkus.panache.common.Parameters;
 import io.quarkus.panache.common.Sort;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -18,7 +19,6 @@ import ru.isador.games.seabattle.domain.game.GamesGrid;
 import ru.isador.games.seabattle.domain.log.GameLog;
 import ru.isador.games.seabattle.domain.log.GameLogRepository;
 import ru.isador.games.seabattle.domain.player.Player;
-import ru.isador.games.seabattle.services.GameConfigResource;
 import ru.isador.games.seabattle.services.commands.ResponseGameChanged;
 
 @ApplicationScoped
@@ -27,19 +27,25 @@ public class GameService {
     private final GameConfigRepository gameConfigRepository;
     private final GameRepository gameRepository;
     private final GameLogRepository gameLogRepository;
+    private final FleetValidator fleetValidator;
 
     @Inject
-    public GameService(GameConfigRepository gameConfigRepository, GameRepository gameRepository, GameLogRepository gameLogRepository) {
+    public GameService(GameConfigRepository gameConfigRepository, GameRepository gameRepository, GameLogRepository gameLogRepository,
+        FleetValidator fleetValidator) {
         this.gameConfigRepository = gameConfigRepository;
         this.gameRepository = gameRepository;
         this.gameLogRepository = gameLogRepository;
+        this.fleetValidator = fleetValidator;
     }
 
     @Transactional
-    public Game newGame(String playerName, String field, GameConfigResource configResource) {
+    public Game newGame(String playerName, String field, UUID configId) throws NewGameException, FleetValidationException, JsonProcessingException {
+        Config predefinedConfig = gameConfigRepository.findById(configId)
+                                                      .orElseThrow(() -> new NewGameException(configId));
+        fleetValidator.validate(predefinedConfig, field);
         Config config;
 
-        config = newConfig(configResource);
+        config = newConfig(predefinedConfig);
 
         Game newGame = new Game(config);
         gameRepository.persist(newGame);
@@ -48,13 +54,12 @@ public class GameService {
         return newGame;
     }
 
-    private Config newConfig(GameConfigResource configResource) {
+    private Config newConfig(Config predefinedConfig) {
         Config config = new Config();
         config.setName("Кастом");
-
         gameConfigRepository.persist(config);
-        configResource.parameters()
-            .forEach(p -> config.addParameter(p.name(), p.value()));
+
+        predefinedConfig.getParameters().forEach(p -> config.addParameter(p.getId().getName(), p.getValue()));
         gameConfigRepository.persist(config);
         return config;
     }

@@ -61,6 +61,27 @@ public class Config implements Serializable {
         return configId;
     }
 
+    public int getFieldSize() {
+        return parameters.stream()
+                   .filter(p -> p.getId().getName().equals("FIELD_SIZE"))
+                   .map(p -> Integer.parseInt(p.getValue()))
+                   .findFirst().orElse(0);
+    }
+
+    public boolean isBordersAllowed() {
+        return parameters.stream()
+                   .filter(p -> p.getId().getName().equals("BORDERS_ALLOWED"))
+                   .map(p -> Boolean.parseBoolean(p.getValue()))
+                   .findFirst().orElse(true);
+    }
+
+    public boolean isCornersAllowed() {
+        return parameters.stream()
+                   .filter(p -> p.getId().getName().equals("CORNERS_ALLOWED"))
+                   .map(p -> Boolean.parseBoolean(p.getValue()))
+                   .findFirst().orElse(false);
+    }
+
     public Duration getGameDuration() {
         if (gameDuration == null) {
             gameDuration = parameters.stream()

@@ -84,34 +84,13 @@
     }
 
     function newGame() {
-        const bordersAllowed = document.getElementById('bordersAllowed').checked;
-        const cornersAllowed = document.getElementById('cornersAllowed').checked;
-        const fieldSize = document.getElementById('fieldSize').value;
-        const ships = document.getElementById('ships').value;
+        const selectedConfig = document.getElementById('gameConf').value;
 
         fetch("/games", {
             method: "POST",
             body: JSON.stringify({
-                field: JSON.stringify(playerMatrix.getMatrix()), config: {
-                    parameters: [
-                        {
-                            name: "FIELD_SIZE",
-                            value: fieldSize
-                        },
-                        {
-                            name: "BORDERS_ALLOWED",
-                            value: bordersAllowed
-                        },
-                        {
-                            name: "CORNERS_ALLOWED",
-                            value: cornersAllowed
-                        },
-                        {
-                            name: "SHIPS",
-                            value: ships
-                        }
-                    ]
-                }
+                field: JSON.stringify(playerMatrix.getMatrix()),
+                config: selectedConfig
             }),
             headers: {
                 "Content-Type": "application/json",
@@ -120,6 +99,8 @@
             if (response.status === 200) {
                 const gameId = await response.text();
                 window.location.replace("/games/" + gameId);
+            } else if (response.status === 400) {
+                alert('Расстановка флота не удовлетворяет конфигу. Похоже ты хитрюга)');
             } else {
                 alert("Небольшие технические чоколадки. Попробуйте создать игру заново" + response);
             }
@@ -128,75 +109,16 @@
         });
     }
 
-    // Это я скомуниздил со стековерфлов
-    // нифига не понял как это работает
-    function isInt(value) {
-        return !isNaN(value) && (function(x) { return (x | 0) === x; })(parseFloat(value));
-    }
-
-    // Проверяем ограничения и очищаем поле если всё окэй
-    function validateAndReset() {
-
-        // hide errors
-        const fieldErrorSpan = document.getElementById('fieldError');
-        fieldErrorSpan.innerText = '';
-
-        let hasErrors = false;
-
-        const fieldSize = document.getElementById('fieldSize');
-        // Ограничиваем размер поля [3, 31]
-        if (!isInt(fieldSize.value) || fieldSize.value < 3 || fieldSize.value > 31) {
-            hasErrors = true;
-            fieldErrorSpan.innerText = 'Кораблинное поле ограничено значениями от 3 до 31 клеток';
-            fieldErrorSpan.style.visibility = 'visible';
-        }
-
-        const ships = document.getElementById('ships');
-        if(!ships.value) {
-            hasErrors = true;
-            fieldErrorSpan.innerText = 'Флот то пустой!';
-            fieldErrorSpan.style.visibility = 'visible';
-        }
-
-        // семь бед - один ресет
-        if (!hasErrors) {
-            resetGame();
-        }
-    }
-
     function resetGame() {
-        const bordersAllowed = document.getElementById('bordersAllowed');
-        const cornersAllowed = document.getElementById('cornersAllowed');
-        const fieldSize = document.getElementById('fieldSize');
-        const ships = document.getElementById('ships');
+        const selectedConfig = document.getElementById('gameConf').value;
+        const config = JSON.parse(document.getElementById('gameConfig_' + selectedConfig).value);
 
-        playerMatrix = new Matrix(parseInt(fieldSize.value), ships.value, new PositionConfig(bordersAllowed.checked, cornersAllowed.checked));
-        playerField = new Field(parseInt(fieldSize.value), '33px');
+        playerMatrix = new Matrix(parseInt(config.fieldSize), config.ships, new PositionConfig(config.bordersAllowed, config.cornersAllowed));
+        playerField = new Field(parseInt(config.fieldSize), '33px');
         playerField.drawField(document.getElementById('battlefieldWrapper'));
 
         document.getElementById('btnNewGame').disabled = true;
         document.getElementById('btnNewGame').innerText = 'Надо расставить корабли';
-
-        const battlefieldErrorSpan = document.getElementById('battlefieldError');
-        battlefieldErrorSpan.innerText = '';
-    }
-
-    // Обновляем настройки игры, если изменился конфиг
-    function gameConfigChanged() {
-        const selectedConfig = document.getElementById('gameConf').value;
-        const config = JSON.parse(document.getElementById('gameConfig_' + selectedConfig).value);
-
-        const bordersAllowed = document.getElementById('bordersAllowed');
-        const cornersAllowed = document.getElementById('cornersAllowed');
-        const fieldSize = document.getElementById('fieldSize');
-        const ships = document.getElementById('ships');
-
-        bordersAllowed.checked = config.bordersAllowed;
-        cornersAllowed.checked = config.cornersAllowed;
-        fieldSize.value = config.fieldSize;
-        ships.value = config.ships;
-
-        resetGame();
     }
 
     function random(max) {
@@ -206,42 +128,40 @@
     // Ваще в тупую расстанавливаем.
     // Прям как оценки требований делаем кароче.
     function randomFill() {
-        if (/\d+x\d+/.test(document.getElementById('ships').value)) {
+        resetGame();
+        const sortedDeckCount = Array.from(playerMatrix.getShipConfig().keys()).sort().reverse();
+
+        let resetCount = 1989;
+        while (!playerMatrix.isFull() || resetCount < 0) {
             resetGame();
-            const sortedDeckCount = Array.from(playerMatrix.getShipConfig().keys()).sort().reverse();
+            resetCount = resetCount - 1;
 
-            let resetCount = 1989;
-            while (!playerMatrix.isFull() || resetCount < 0) {
-                resetGame();
-                resetCount = resetCount - 1;
+            for (let deckCount of sortedDeckCount) {
+                if (!playerMatrix.hasFreeCells(deckCount)) {
+                    break;
+                }
 
-                for (let deckCount of sortedDeckCount) {
-                    if (!playerMatrix.hasFreeCells(deckCount)) {
-                        break;
-                    }
-
-                    for (let i = 0; i < playerMatrix.getShipConfig().get(deckCount); i++) {
-                        let placed = false;
-                        let retryCount = 42; // Ага ага, это магия!!!
-                        while (!placed && retryCount > 0) {
-                            const direction = random(2) ? 'horizontal' : 'vertical';
-                            const x = this.random(playerMatrix.getSize());
-                            const y = this.random(playerMatrix.getSize());
-                            if (playerMatrix.canPlaceShip(deckCount, x, y, direction)) {
-                                playerMatrix.placeShip(deckCount, x, y, direction);
-                                playerField.drawShip(deckCount, x, y, direction);
-                                placed = true;
-                            }
-                            retryCount--;
+                for (let i = 0; i < playerMatrix.getShipConfig().get(deckCount); i++) {
+                    let placed = false;
+                    let retryCount = 42; // Ага ага, это магия!!!
+                    while (!placed && retryCount > 0) {
+                        const direction = random(2) ? 'horizontal' : 'vertical';
+                        const x = this.random(playerMatrix.getSize());
+                        const y = this.random(playerMatrix.getSize());
+                        if (playerMatrix.canPlaceShip(deckCount, x, y, direction)) {
+                            playerMatrix.placeShip(deckCount, x, y, direction);
+                            playerField.drawShip(deckCount, x, y, direction);
+                            placed = true;
                         }
+                        retryCount--;
                     }
                 }
+            }
 
-                if (playerMatrix.isFull()) {
-                    document.getElementById('btnNewGame').disabled = false;
-                    document.getElementById('btnNewGame').innerText = 'На абордаж!';
-                    return;
-                }
+            if (playerMatrix.isFull()) {
+                document.getElementById('btnNewGame').disabled = false;
+                document.getElementById('btnNewGame').innerText = 'На абордаж!';
+                return;
             }
         }
     }
@@ -393,7 +313,7 @@
                 <div id="gameConfig">
                     <div id="gameConfigTitle"><span class="midTitle">Начать новую игру</span></div>
                     <div id="gameTypeLabel"><label for="gameConf">Предустановка</label></div>
-                    <div id="gameTypeConf"><select id="gameConf" name="conf" onchange="gameConfigChanged()">
+                    <div id="gameTypeConf"><select id="gameConf" name="conf" onchange="resetGame()">
                             {#each gameConfigList}
                                 <option value="{it.id}">{it.name}</option>
                             {/each}
@@ -401,21 +321,6 @@
                         {#each gameConfigList}
                             <input type="hidden" id="gameConfig_{it.id}" value="{it.config}">
                         {/each}</div>
-
-                    <div id="bordersLabel"><label for="bordersAllowed">Касание границ</label></div>
-                    <div id="bordersConf"><input type="checkbox" id="bordersAllowed" name="bordersAllowed" onchange="validateAndReset()"></div>
-
-                    <div id="cornersLabel"><label for="cornersAllowed">Касание углов кораблей</label></div>
-                    <div id="cornersConf"><input type="checkbox" id="cornersAllowed" name="cornersAllowed" onchange="validateAndReset()"></div>
-
-                    <span id="fieldError" class="errorText"></span>
-                    <div id="fieldLabel"><label for="fieldSize">Размер поля</label></div>
-                    <div id="fieldConf"><input type="text" id="fieldSize" name="fieldSize" onchange="validateAndReset()"></div>
-
-                    <div id="shipLabel"><label for="ships">Набор кораблей</label></div>
-                    <div id="shipConf"><input type="text" id="ships" name="ships" onchange="validateAndReset()"></div>
-
-                    <span id="battlefieldError" class="errorText"></span>
                     <div id="battlefieldLabel"><label>Расстановка кораблей</label></div>
                     <div id="battlefieldWrapper"></div>
                     <div id="battlefieldButtons">
@@ -453,39 +358,34 @@
             <span class="bigTitle">Правила игры</span>
             <div>
                 <ul>
-                    <li>Выбираем предустановленные настройки, или заполняем самостоятельно:</li>
+                    <li>Выбираем предустановленные настройки:</li>
                     <ul>
-                        <li>Касание границ: могу ли корабли касаться границ поля</li>
-                        <li>Касание углов кораблей: могут ли корабли касаться друг друга углами или нет</li>
-                        <li>Размер поля: ну тут всё должно быть понятно</li>
-                        <li>Набор кораблей: отвечает за виды и количество кораблей на поле ("вид"x"количество";)</li>
+                        <li>Миддл: правила КРаБР. Корабли не касаются друг друга, даже углами. Поле размером 5х5. 2 однопалубника, 1 двухпалубник, 1 трёхпалубник.</li>
+                        <li>Сеньор: тут прямо как в школе на химии играли: поле 10х10, полный набор кораблей. Корабли также не могут касаться друг друга.</li>
                     </ul>
                     <li>Расставляем корабли:</li>
                     <ul>
-                        <li>Самостоятельная расстановка Для этого достаточно нажать на поле и протащить курсор на нужное число палуб. Если выбранное
+                        <li>Самостоятельная расстановка: Для этого достаточно нажать на поле и протащить курсор на нужное число палуб. Если выбранное
                             место удовлетворяет правилам игры - корабль сразу отрисуется. К сожалению в мобильной версии ручная расстановка кораблей
                             не работает:(
                         </li>
-                        <li>В случайном порядке. Для этого достаточно нажать кнопку <img class="btnRandom"> и на поле сразу появится флот. Если
-                            алгоритм не смог
-                            расставить корабли, кнопку можно нажать ещё раз.
+                        <li>В случайном порядке: Для этого достаточно нажать кнопку <img class="btnRandom"> и на поле сразу появится флот. Если
+                            алгоритм не смог расставить корабли, кнопку можно нажать ещё раз.
                         </li>
                         <li>Очистка поля, осуществляется кнопкой <img class="btnReset">.</li>
                         <li><img src="/img/placeExample.gif"></li>
                     </ul>
-                    <li>После расстановки кораблей будет доступна кнопка "На абордаж!". Она и создаёт новую игру</li>
-                    <li>После создания игры она появится в списке текущих игр в лобби, и любой игрок сможет присоединиться к ней.</li>
-                    <li>Для присоединиться к игре надо нажать кнопку <img class="btnJoin">, расставить корабли в соответствии с настройками игры и
+                    <li>После расстановки кораблей будет доступна кнопка "На абордаж!". Она и создаёт новую игру.</li>
+                    <li>После создания игры она появится в списке текущих игр в (таблица под настройками), и любой игрок сможет присоединиться к ней.</li>
+                    <li>Для присоединения к игре надо нажать кнопку <img class="btnJoin">, расставить корабли в соответствии с настройками игры и
                         также нажать кнопку "На абордаж!".
                     </li>
                     <li>Присоединиться к игре в качестве наблюдателя можно по кнопке <img class="btnView">.</li>
                     <li>Вначале игра находится в режиме ожидания соперника. После присоединения соперника заголовок сменится и, под ним будет
                         указано имя атакующего.</li>
                     <li><img src="/img/waitingExample.gif"></li>
-                    <li>Общение соперников и зрителей организовано в чате игры. Он расположен в самом низу.</li>
                     <li>После окончания игры проигравшему сопернику покажется расстановка кораблей противника.</li>
                     <li>При выходе из игры - победа автоматически присваивается противнику.</li>
-                    <li>Посмотреть общую статистику побед можно по ссылке "Статистика" внизу экрана лобби.</li>
                 </ul>
             </div>
             <div id="rightWrapper"></div>
