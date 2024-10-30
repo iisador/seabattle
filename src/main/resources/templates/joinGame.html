@@ -32,9 +32,6 @@
 
         document.getElementById('btnJoin').disabled = true;
         document.getElementById('btnJoin').innerText = 'Надо расставить корабли';
-
-        const battlefieldErrorSpan = document.getElementById('battlefieldError');
-        battlefieldErrorSpan.innerText = '';
     }
 
     // Нет времени объяснять! Дублироваем код!
@@ -63,8 +60,8 @@
                     let retryCount = 42; // Ага ага, это магия!!!
                     while (!placed && retryCount > 0) {
                         const direction = random(2) ? 'horizontal' : 'vertical';
-                        const x = this.random(playerMatrix.getSize());
-                        const y = this.random(playerMatrix.getSize());
+                        const x = random(playerMatrix.getSize());
+                        const y = random(playerMatrix.getSize());
                         if (playerMatrix.canPlaceShip(deckCount, x, y, direction)) {
                             playerMatrix.placeShip(deckCount, x, y, direction);
                             playerField.drawShip(deckCount, x, y, direction);
@@ -120,8 +117,6 @@
             const direction = endBlock.isOneRow(startBlock) ? 'horizontal' : 'vertical';
             const computedStartBlock = endBlock.getStartBlock(startBlock);
             if (playerMatrix.canPlaceShip(deckCount, computedStartBlock.getX(), computedStartBlock.getY(), direction)) {
-                console.log('placing ship');
-
                 playerMatrix.placeShip(deckCount, computedStartBlock.getX(), computedStartBlock.getY(), direction);
                 playerField.drawShip(deckCount, computedStartBlock.getX(), computedStartBlock.getY(), direction)
             } else {
@@ -170,7 +165,6 @@
                     <input type="hidden" id="fieldSize" name="fieldSize" value="{FIELD_SIZE}" disabled>
                     <input type="hidden" id="ships" name="ships" value="{SHIPS}" disabled>
 
-                    <span id="battlefieldError" class="errorText"></span>
                     <div id="battlefieldLabel"><label>Расстановка кораблей</label></div>
                     <div id="battlefieldWrapper"></div>
                     <div id="battlefieldButtons">

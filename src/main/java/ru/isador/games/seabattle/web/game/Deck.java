@@ -2,21 +2,21 @@ package ru.isador.games.seabattle.web.game;
 
 public class Deck {
 
-    private final int x;
-    private final int y;
+    private final byte x;
+    private final byte y;
     boolean alive;
 
-    public Deck(int x, int y) {
+    public Deck(byte x, byte y) {
         this.x = x;
         this.y = y;
         alive = true;
     }
 
-    public int getX() {
+    public byte getX() {
         return x;
     }
 
-    public int getY() {
+    public byte getY() {
         return y;
     }
 

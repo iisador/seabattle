@@ -105,8 +105,8 @@ class Matrix {
                 || y === 0
                 || x === (this.#size - 1)
                 || y === (this.#size - 1)
-                || ((x + deckCount) === this.#size)
-                || ((y + deckCount) === this.#size)) {
+                || ((direction === 'vertical') && (x + deckCount) === this.#size)
+                || ((direction === 'horizontal') && (y + deckCount) === this.#size)) {
                 return false;
             }
         }

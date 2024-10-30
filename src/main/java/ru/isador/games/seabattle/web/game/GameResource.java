@@ -60,6 +60,7 @@ public class GameResource {
             eventBus.publish("gameBus", gameService.getGameGrid(g.getId()));
             return g.getId();
         } catch (NewGameException | FleetValidationException | JsonProcessingException e) {
+            System.err.println(e.getMessage());
             return Response.status(Response.Status.BAD_REQUEST).build();
         }
     }
@@ -69,13 +70,14 @@ public class GameResource {
     @Path("/{id}")
     public Object getGame(@Context SecurityContext securityContext, @PathParam("id") UUID id, @QueryParam("field") String field) {
         Game g = gameService.getGame(id);
-        try {
-            fleetValidator.validate(g.getConfig(), field);
-        } catch (FleetValidationException e) {
-            return Response.status(Response.Status.BAD_REQUEST).build();
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException(e);
+        if (field != null) {
+            try {
+                fleetValidator.validate(g.getConfig(), field);
+            } catch (FleetValidationException | JsonProcessingException e) {
+                return Response.status(Response.Status.BAD_REQUEST).build();
+            }
         }
+
         if (g.getStatus().equals(GameStatus.FAILED) || g.getStatus().equals(GameStatus.FINISHED)) {
             return Response.seeOther(UriBuilder.fromPath("/lobby").build()).build();
         }
@@ -89,7 +91,7 @@ public class GameResource {
     @Path("/{id}/view")
     public TemplateInstance viewGame(@Context SecurityContext securityContext, @PathParam("id") UUID id) {
         return viewGame.data("viewerName", securityContext.getUserPrincipal().getName())
-                   .data("gameId", id);
+                       .data("gameId", id);
     }
 
     @GET

@@ -5,15 +5,15 @@ import java.util.Map;
 public class ResponsePlayerJoined extends Response {
 
     private final String playerName;
-    private final Map<Integer, Integer> aliveShips;
+    private final Map<Byte, Byte> aliveShips;
 
-    public ResponsePlayerJoined(String playerName, Map<Integer, Integer> aliveShips) {
+    public ResponsePlayerJoined(String playerName, Map<Byte, Byte> aliveShips) {
         super(ResponseType.PLAYER_JOINED);
         this.playerName = playerName;
         this.aliveShips = aliveShips;
     }
 
-    public Map<Integer, Integer> getAliveShips() {
+    public Map<Byte, Byte> getAliveShips() {
         return aliveShips;
     }
 

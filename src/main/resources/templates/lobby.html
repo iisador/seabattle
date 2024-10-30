@@ -43,18 +43,18 @@
         watchCell.style.textAlign = '-webkit-center';
         const watchDiv = document.createElement('div');
         watchDiv.className = 'btnView';
-        watchDiv.onclick = function() {
+        watchDiv.onclick = function () {
             window.location.replace('/games/' + gameId + '/view');
         };
         watchCell.appendChild(watchDiv);
         row.appendChild(watchCell);
 
-        if(gameStatus === 'WAITING') {
+        if (gameStatus === 'WAITING') {
             const joinCell = row.insertCell();
             joinCell.style.textAlign = '-webkit-center';
             const joinDiv = document.createElement('div');
             joinDiv.className = 'btnJoin';
-            joinDiv.onclick = function() {
+            joinDiv.onclick = function () {
                 window.location.replace('/games/' + gameId + '/join');
             };
             joinCell.appendChild(joinDiv);
@@ -72,7 +72,7 @@
 
     function removeRow(gameId) {
         const e = document.getElementById(gameId)
-        if(e) {
+        if (e) {
             e.parentElement.removeChild(e);
         }
     }
@@ -146,8 +146,8 @@
                     let retryCount = 42; // Ага ага, это магия!!!
                     while (!placed && retryCount > 0) {
                         const direction = random(2) ? 'horizontal' : 'vertical';
-                        const x = this.random(playerMatrix.getSize());
-                        const y = this.random(playerMatrix.getSize());
+                        const x = random(playerMatrix.getSize());
+                        const y = random(playerMatrix.getSize());
                         if (playerMatrix.canPlaceShip(deckCount, x, y, direction)) {
                             playerMatrix.placeShip(deckCount, x, y, direction);
                             playerField.drawShip(deckCount, x, y, direction);
@@ -203,8 +203,6 @@
             const direction = endBlock.isOneRow(startBlock) ? 'horizontal' : 'vertical';
             const computedStartBlock = endBlock.getStartBlock(startBlock);
             if (playerMatrix.canPlaceShip(deckCount, computedStartBlock.getX(), computedStartBlock.getY(), direction)) {
-                console.log('placing ship');
-
                 playerMatrix.placeShip(deckCount, computedStartBlock.getX(), computedStartBlock.getY(), direction);
                 playerField.drawShip(deckCount, computedStartBlock.getX(), computedStartBlock.getY(), direction)
             } else {
@@ -229,14 +227,14 @@
         drawingShip = 0;
     }, false);
 
-    function showHelp() {
+    function showHelp(e) {
         document.getElementById('gameWrapper').style.filter = 'grayscale(1)';
-        document.getElementById('helpModal').style.visibility = 'visible';
+        document.getElementById(e).style.visibility = 'visible';
     }
 
-    function hideHelp() {
+    function hideHelp(e) {
         document.getElementById('gameWrapper').style.filter = 'grayscale(0)';
-        document.getElementById('helpModal').style.visibility = 'hidden';
+        document.getElementById(e).style.visibility = 'hidden';
     }
 
     function connect() {
@@ -321,6 +319,9 @@
                         {#each gameConfigList}
                             <input type="hidden" id="gameConfig_{it.id}" value="{it.config}">
                         {/each}</div>
+                    <div id="gameTypeHelp">
+                        <span class="midTitle" style="cursor: pointer;" onclick="showHelp('gameTypeHelpModal')">?</span>
+                    </div>
                     <div id="battlefieldLabel"><label>Расстановка кораблей</label></div>
                     <div id="battlefieldWrapper"></div>
                     <div id="battlefieldButtons">
@@ -347,21 +348,25 @@
                     </tbody>
                 </table>
             </div>
-            <span style="font-size: medium;">Если не знакомы с правилами игры, почитайте <span style="font-style: italic;text-decoration: underline; cursor: pointer" onclick="showHelp()">справку.</span></span>
+            <span style="font-size: medium;">Если не знакомы с правилами игры, почитайте <span
+                        style="font-style: italic;text-decoration: underline; cursor: pointer" onclick="showHelp('helpModal')">справку.</span></span>
         </div>
     </div>
-    <div id="rightWrapper">
-    </div>
+    <div id="rightWrapper"></div>
     <div id="bottomWrapper"></div>
-    <div id="helpModal" class="modal-window" style="visibility: hidden">
+    <div id="helpModal" class="modal-window">
         <div id="help">
             <span class="bigTitle">Правила игры</span>
             <div>
                 <ul>
                     <li>Выбираем предустановленные настройки:</li>
                     <ul>
-                        <li>Миддл: правила КРаБР. Корабли не касаются друг друга, даже углами. Поле размером 5х5. 2 однопалубника, 1 двухпалубник, 1 трёхпалубник.</li>
-                        <li>Сеньор: тут прямо как в школе на химии играли: поле 10х10, полный набор кораблей. Корабли также не могут касаться друг друга.</li>
+                        <li>Миддл: правила КРаБР. Корабли не касаются друг друга, даже углами. Поле размером 5х5. 2 однопалубника, 1 двухпалубник, 1
+                            трёхпалубник.
+                        </li>
+                        <li>Сеньор: тут прямо как в школе на химии играли: поле 10х10, полный набор кораблей. Корабли также не могут касаться друг
+                            друга.
+                        </li>
                     </ul>
                     <li>Расставляем корабли:</li>
                     <ul>
@@ -376,23 +381,56 @@
                         <li><img src="/img/placeExample.gif"></li>
                     </ul>
                     <li>После расстановки кораблей будет доступна кнопка "На абордаж!". Она и создаёт новую игру.</li>
-                    <li>После создания игры она появится в списке текущих игр в (таблица под настройками), и любой игрок сможет присоединиться к ней.</li>
+                    <li>После создания игры она появится в списке текущих игр в (таблица "Текущие игры" под настройками), и любой игрок сможет
+                        присоединиться к ней.
+                    </li>
                     <li>Для присоединения к игре надо нажать кнопку <img class="btnJoin">, расставить корабли в соответствии с настройками игры и
                         также нажать кнопку "На абордаж!".
                     </li>
                     <li>Присоединиться к игре в качестве наблюдателя можно по кнопке <img class="btnView">.</li>
                     <li>Вначале игра находится в режиме ожидания соперника. После присоединения соперника заголовок сменится и, под ним будет
-                        указано имя атакующего.</li>
+                        указано имя атакующего.
+                    </li>
                     <li><img src="/img/waitingExample.gif"></li>
                     <li>После окончания игры проигравшему сопернику покажется расстановка кораблей противника.</li>
                     <li>При выходе из игры - победа автоматически присваивается противнику.</li>
+                    <li>Если время игры вышло - побеждает игрок с наибольшим количеством попаданий.</li>
                 </ul>
             </div>
             <div id="rightWrapper"></div>
             <div id="bottomWrapper">
-                <button id="toLobby" class="standardBtn" onclick="hideHelp()">скрыть справку</button>
+                <button id="toLobby" class="standardBtn" onclick="hideHelp('helpModal')">скрыть справку</button>
             </div>
         </div>
+    </div>
+    <div id="gameTypeHelpModal" class="modal-window"
+         style="line-height: normal;font-size: 14px;position: relative;width: 300px;top: -475px;left: -390px;">
+        <div>
+            <ul>
+                <li>Миддл:
+                    <ul>
+                        <li>Корабли не касаются друг друга, даже углами.</li>
+                        <li>Время на игру: 5 мин.</li>
+                        <li>Размер поля: 5х5.</li>
+                        <li>Однопалубный: 2 шт.</li>
+                        <li>Двухпалубный: 1 шт.</li>
+                        <li>Трёхпалубный: 1 шт.</li>
+                    </ul>
+                </li>
+                <li>Сеньор:
+                    <ul>
+                        <li>Корабли не касаются друг друга, даже углами.</li>
+                        <li>Время на игру: 10 мин.</li>
+                        <li>Размер поля: 10х10.</li>
+                        <li>Однопалубный: 4 шт.</li>
+                        <li>Двухпалубный: 3 шт.</li>
+                        <li>Трёхпалубный: 2 шт.</li>
+                        <li>Четырёхпалубный: 1 шт.</li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+        <button id="toLobby" class="standardBtn" onclick="hideHelp('gameTypeHelpModal')">скрыть</button>
     </div>
 </div>
 </body>

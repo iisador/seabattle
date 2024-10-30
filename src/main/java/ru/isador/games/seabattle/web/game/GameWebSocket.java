@@ -135,11 +135,14 @@ public class GameWebSocket {
                 List<ResponseViewerJoined.Player> players = gw.getSortedPlayerNames().stream()
                                                                 .map(gw::getPlayer)
                                                                 .map(p -> new ResponseViewerJoined.Player(p.getPlayer().getPlayerName(),
-                                                                    p.getSquadron().getMatrix(), p.getSquadron()
-                                                                                                  .getAliveShips()))
+                                                                    p.getSquadron().getMatrix(), p.getSquadron().getAliveShips()))
                                                                 .toList();
                 if (players.size() > 1) {
-                    broadcastToGame(gameId, new ResponseViewerJoined(viewerName, players.get(0), players.get(1), gw.getRemainingTime()));
+                    if(gw.getFirstFireTime() != null) {
+                        broadcastToGame(gameId, new ResponseViewerJoined(viewerName, players.get(0), players.get(1), gw.getRemainingTime()));
+                    } else {
+                        broadcastToGame(gameId, new ResponseViewerJoined(viewerName, players.get(0), players.get(1), 0L));
+                    }
                 } else {
                     broadcastToGame(gameId, new ResponseViewerJoined(viewerName, players.get(0)));
                 }
@@ -198,7 +201,21 @@ public class GameWebSocket {
                                                                             p.getSquadron().getMatrix(), p.getPlayer().getField(), p.getSquadron()
                                                                                                                                     .getAliveShips()))
                                                                         .toList();
-                        broadcastToGame(gameId, new ResponseGameFinished(null, gameId, players.get(0), players.get(1)));
+
+                        byte attackerHints = gw.getPlayer(attacker).getSquadron().getHitCount();
+                        byte opponentHints = gw.getOtherPlayer(attacker).getSquadron().getHitCount();
+                        if (attackerHints > opponentHints) {
+                            broadcastToGame(gameId,
+                                new ResponseGameFinished(gw.getOtherPlayer(attacker).getPlayer().getPlayerName(), gameId, players.get(0),
+                                    players.get(1)));
+                        } else if (opponentHints > attackerHints) {
+                            broadcastToGame(gameId,
+                                new ResponseGameFinished(attacker, gameId, players.get(0),
+                                    players.get(1)));
+                        } else {
+                            broadcastToGame(gameId, new ResponseGameFinished(null, gameId, players.get(0), players.get(1)));
+                        }
+
                         eventBus.publish("gameBus",
                             new GamesGrid(gw.getGame().getId(), gw.getGame().getCreateTime(), gw.getGame().getStatus(), gw.getPlayersString()));
 
@@ -213,7 +230,8 @@ public class GameWebSocket {
 
                     broadcastToGame(gameId,
                         new ResponseFire(attacker, opponent.getPlayer().getPlayerName(), cmd.getX(), cmd.getY(), fr, s.getMatrix(),
-                            s.getAliveShips(), gw.getFirstFireTime() == null ? gw.getGame().getConfig().getGameDuration().get(ChronoUnit.SECONDS) : 0));
+                            s.getAliveShips(),
+                            gw.getFirstFireTime() == null ? gw.getGame().getConfig().getGameDuration().get(ChronoUnit.SECONDS) : 0));
 
                     // Запоминаем время первой атаки
                     if (gw.getFirstFireTime() == null) {

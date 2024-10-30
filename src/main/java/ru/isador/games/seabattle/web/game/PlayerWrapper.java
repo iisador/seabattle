@@ -18,10 +18,10 @@ public class PlayerWrapper {
 
     private Squadron constructSquadron(int[][] field) {
         Squadron s = new Squadron(field.length);
-        int[][] marks = new int[field.length][field.length];
+        byte[][] marks = new byte[field.length][field.length];
 
-        for (int i = 0; i < field.length; i++) {
-            for (int j = 0; j < field.length; j++) {
+        for (byte i = 0; i < field.length; i++) {
+            for (byte j = 0; j < field.length; j++) {
                 if (field[i][j] > 0) {
                     if (field[i][j] == 1) {
                         s.addShip(new Ship(new Deck(i, j)));
@@ -30,12 +30,12 @@ public class PlayerWrapper {
                         List<Deck> decks = new ArrayList<>();
                         if ((j + 1 < field.length) && (field[i][j + 1] > 0)) {
                             for (int k = 0; k < deckCount; k++) {
-                                decks.add(new Deck(i, j + k));
+                                decks.add(new Deck(i, (byte) (j + k)));
                             }
-                            j += deckCount - 1;
+                            j += (byte) (deckCount - 1);
                         } else if ((i + 1 < field.length) && (marks[i + 1][j] != -1) && (field[i + 1][j] > 0)) {
                             for (int k = 0; k < deckCount; k++) {
-                                decks.add(new Deck(i + k, j));
+                                decks.add(new Deck((byte) (i + k), j));
                                 marks[i + k][j] = -1;
                             }
                         }

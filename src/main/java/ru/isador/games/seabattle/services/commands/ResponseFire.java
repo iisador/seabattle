@@ -12,10 +12,10 @@ public class ResponseFire extends Response {
     private final int y;
     private final FireResult result;
     private final char[][] matrix;
-    private final Map<Integer, Integer>  aliveShips;
+    private final Map<Byte, Byte>  aliveShips;
     private final long gameDuration;
 
-    public ResponseFire(String attacker, String opponent, int x, int y, FireResult result, char[][] matrix, Map<Integer, Integer> aliveShips, long gameDuration) {
+    public ResponseFire(String attacker, String opponent, int x, int y, FireResult result, char[][] matrix, Map<Byte, Byte> aliveShips, long gameDuration) {
         super(ResponseType.FIRE_RESULT);
         this.attacker = attacker;
         this.opponent = opponent;
@@ -51,7 +51,7 @@ public class ResponseFire extends Response {
         return y;
     }
 
-    public Map<Integer, Integer>  getAliveShips() {
+    public Map<Byte, Byte>  getAliveShips() {
         return aliveShips;
     }
 

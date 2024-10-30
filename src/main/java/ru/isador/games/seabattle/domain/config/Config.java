@@ -61,25 +61,11 @@ public class Config implements Serializable {
         return configId;
     }
 
-    public int getFieldSize() {
+    public byte getFieldSize() {
         return parameters.stream()
                    .filter(p -> p.getId().getName().equals("FIELD_SIZE"))
-                   .map(p -> Integer.parseInt(p.getValue()))
-                   .findFirst().orElse(0);
-    }
-
-    public boolean isBordersAllowed() {
-        return parameters.stream()
-                   .filter(p -> p.getId().getName().equals("BORDERS_ALLOWED"))
-                   .map(p -> Boolean.parseBoolean(p.getValue()))
-                   .findFirst().orElse(true);
-    }
-
-    public boolean isCornersAllowed() {
-        return parameters.stream()
-                   .filter(p -> p.getId().getName().equals("CORNERS_ALLOWED"))
-                   .map(p -> Boolean.parseBoolean(p.getValue()))
-                   .findFirst().orElse(false);
+                   .map(p -> Byte.parseByte(p.getValue()))
+                   .findFirst().orElse((byte) 0);
     }
 
     public Duration getGameDuration() {
@@ -108,6 +94,27 @@ public class Config implements Serializable {
 
     public List<GameParameter> getParameters() {
         return parameters;
+    }
+
+    public String getShips() {
+        return parameters.stream()
+                   .filter(p -> p.getId().getName().equals("SHIPS"))
+                   .map(GameParameter::getValue)
+                   .findFirst().orElse("");
+    }
+
+    public boolean isBordersAllowed() {
+        return parameters.stream()
+                   .filter(p -> p.getId().getName().equals("BORDERS_ALLOWED"))
+                   .map(p -> Boolean.parseBoolean(p.getValue()))
+                   .findFirst().orElse(true);
+    }
+
+    public boolean isCornersAllowed() {
+        return parameters.stream()
+                   .filter(p -> p.getId().getName().equals("CORNERS_ALLOWED"))
+                   .map(p -> Boolean.parseBoolean(p.getValue()))
+                   .findFirst().orElse(false);
     }
 
     public boolean isPredefined() {

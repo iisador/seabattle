@@ -41,6 +41,6 @@ public class ResponseViewerJoined extends Response {
         return viewerName;
     }
 
-    public record Player(String name, char[][] matrix, Map<Integer, Integer> ships) {
+    public record Player(String name, char[][] matrix, Map<Byte, Byte> ships) {
     }
 }

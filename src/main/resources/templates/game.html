@@ -6,6 +6,7 @@
     <link href="/css/game.css" rel="stylesheet">
     <link href="/css/field.css" rel="stylesheet">
     <script src="/js/field.js"></script>
+    <script src="/js/common.js"></script>
 
     <title>{msg:game_title}</title>
 </head>
@@ -48,7 +49,7 @@
 
     function setTurn(turn, size = 'xx-large') {
         const turnSpan = document.getElementById('turnSpan');
-        turnSpan.innerText = turn;
+        turnSpan.innerHTML = turn;
         turnSpan.style.fontSize = size;
     }
 
@@ -98,37 +99,39 @@
         isGameFinished = true;
         if (!winner) {
             chatMessage('', 'ОПА, ВРЕМЯ ВЫШЛО. НИЧЬЯ ПОЛУЧАЕТСЯ');
-            setTurn('НУУУ... НИЧЬЯ. ВРЕМЯ ВЫШЛО', 'xxx-large');
+            setTurn('НУУУ... НИЧЬЯ. ВРЕМЯ ВЫШЛО. НУЖНО ПЕРЕИГРЫВАТЬ...', 'xxx-large');
             document.getElementById('leave').innerText = 'Просто вернуться в лобби';
-
-            enemyFieldBlocks = new Field(myShips.length, '33px', 'en');
-            enemyFieldBlocks.drawField(document.getElementById('enemyField'));
-            enemyFieldBlocks.drawShips(JSON.parse(opponentField), 'enemyShip');
-            enemyFieldBlocks.layoutBattlefield(matrix);
-            return;
-        }
-
-        if (whoami() === winner) {
-            chatMessage('', 'ПОЗДРАВЛЯМБА, ' + winner + ' ПОБЕЖДАЕТ!!!');
-            setTurn('УРА! Поздравляем с победой', 'xxx-large');
+        } else if (whoami() === winner) {
+            if (isRcrPlayer(winner)) {
+                chatMessage('', 'Поздравляем с победой! КРаБР-2025 отправляется в ' + winner + '!');
+                setTurn('Поздравляем с победой! КР<span class="midTitle">А</span>БР-2025 отправляется в ' + winner + '!', 'xxx-large');
+            } else {
+                chatMessage('', 'УРА-А-А, ' + winner + ' ПОБЕЖДАЕТ!!!');
+                setTurn('УРА! Поздравляем с победой', 'xxx-large');
+            }
             document.getElementById('leave').innerText = 'Победно вернуться в лобби';
         } else {
-            chatMessage('', 'ЭХ, ' + whoami() + ', В СЛЕДУЮЩИЙ РАЗ ПОВЕЗЕТ!');
-            setTurn('Победил ' + winner + '! Поздравляем! Попытаете счастья еще раз?', 'xxx-large');
+            if (isRcrPlayer(winner)) {
+                chatMessage('', 'Поздравляем с победой! КРаБР-2025 отправляется в ' + winner + '!');
+                setTurn('Поздравляем с победой! КР<span class="midTitle">А</span>БР-2025 отправляется в ' + winner + '!', 'xxx-large');
+            } else {
+                chatMessage('', 'Победил ' + winner + '! Поздравляем!');
+                setTurn('Победил ' + winner + '! Поздравляем! Попытаете счастья еще раз?', 'xxx-large');
+            }
             document.getElementById('leave').innerText = 'Вернуться к выбору игры';
+        }
 
+        if (whoami() !== winner) {
             enemyFieldBlocks = new Field(myShips.length, '33px', 'en');
             enemyFieldBlocks.drawField(document.getElementById('enemyField'));
             enemyFieldBlocks.drawShips(JSON.parse(opponentField), 'enemyShip');
             enemyFieldBlocks.layoutBattlefield(matrix);
         }
-
         document.removeEventListener('click', clickListener);
     }
 
     function playerLeaved(leavedPlayer) {
         chatMessage('', leavedPlayer + ' БЕЖАЛ ПОДЖАВ ХВОСТ! ' + whoami() + ' ПОБЕЖДАЕТ!!!');
-        // setTurn('ПОБЕДА!!! ' + leavedPlayer + ' БЕЖАЛ С ПОЛЯ БОЯ ПОДЖАВ ХВОСТ!', 'xxx-large');
         document.removeEventListener('click', clickListener);
     }
 
@@ -410,7 +413,7 @@
     <div id="bottomWrapper"></div>
 </div>
 
-<div id="errModal" class="modal-window" hidden>
+<div id="errModal" class="modal-window" style="position: relative">
     <span id="errorText" style="font-size: xx-large;"></span>
     <button type="button" class="standardBtn" onclick="leaveGame()">Вернуться в лобби</button>
 </div>

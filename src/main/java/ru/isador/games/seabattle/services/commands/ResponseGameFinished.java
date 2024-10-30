@@ -33,6 +33,6 @@ public class ResponseGameFinished extends Response {
         return winner;
     }
 
-    public record Player(String name, char[][] matrix, String field, Map<Integer, Integer> ships) {
+    public record Player(String name, char[][] matrix, String field, Map<Byte, Byte> ships) {
     }
 }
