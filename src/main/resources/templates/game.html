@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
@@ -91,7 +92,7 @@
             updateTitle('БИТВА ' + whoami() + ' vs ' + player1);
         }
 
-        document.addEventListener('click', clickListener);
+        document.addEventListener('mousedown', clickListener);
     }
 
     function gameFinished(winner, opponentField, matrix) {
@@ -283,7 +284,6 @@
         socket = new WebSocket(url);
 
         socket.onmessage = function (m) {
-            console.log(m);
             const cmd = JSON.parse(m.data);
 
             switch (cmd.type) {

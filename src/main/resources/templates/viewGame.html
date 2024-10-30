@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
@@ -224,7 +225,6 @@
         socket = new WebSocket(url);
 
         socket.onmessage = function (m) {
-            console.log(m);
             const cmd = JSON.parse(m.data);
 
             switch (cmd.type) {

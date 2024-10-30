@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
@@ -74,7 +75,7 @@
 
             if (playerMatrix.isFull()) {
                 document.getElementById('btnJoin').disabled = false;
-                document.getElementById('btnJoin').innerText = 'ПОЕХАЛИ!';
+                document.getElementById('btnJoin').innerText = 'На абордаж!';
                 return;
             }
         }
@@ -135,7 +136,7 @@
 
         if (playerMatrix.isFull()) {
             document.getElementById('btnJoin').disabled = false;
-            document.getElementById('btnJoin').innerText = 'ПОЕХАЛИ!';
+            document.getElementById('btnJoin').innerText = 'На абордаж!';
         }
 
         drawingShip = 0;
@@ -173,7 +174,7 @@
                     </div>
                     <div id="configButtons">
                         <button id="toLobby" class="standardBtn" type="button" onclick="window.location.replace('/lobby/')">Не, чет передумал</button>
-                        <button id="btnJoin" class="standardBtn" disabled onclick="joinGame()">Надо расставить корабли</button>
+                        <button id="btnJoin" class="standardBtn" disabled onmousedown="joinGame()">Надо расставить корабли</button>
                     </div>
                 </div>
             </div>
