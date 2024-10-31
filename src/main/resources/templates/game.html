@@ -56,8 +56,11 @@
 
     function chatMessage(playerName, m) {
         const chatLog = document.getElementById('chatLog');
-        chatLog.value += '\n' + playerName + '> ' + m;
-        chatLog.scrollTop = chatLog.scrollHeight;
+        if (playerName) {
+            chatLog.innerHTML = playerName + '> ' + m + '\n' + chatLog.innerHTML;
+        } else {
+            chatLog.innerHTML = m + '\n' + chatLog.innerHTML;
+        }
     }
 
     function sendToChat() {
@@ -80,8 +83,8 @@
     }
 
     function gameStarted(turn, player1, player2) {
-        chatMessage('', 'Игра началась!');
         chatMessage('', 'Ход за ' + turn + '\n');
+        chatMessage('', 'Игра началась!');
         currentTurn = turn;
         setTurn('Ход: ' + currentTurn);
         if (whoami() === player1) {
@@ -99,8 +102,8 @@
         clearInterval(intervalId);
         isGameFinished = true;
         if (!winner) {
-            chatMessage('', 'ОПА, ВРЕМЯ ВЫШЛО. НИЧЬЯ ПОЛУЧАЕТСЯ');
             setTurn('НУУУ... НИЧЬЯ. ВРЕМЯ ВЫШЛО. НУЖНО ПЕРЕИГРЫВАТЬ...', 'xxx-large');
+            chatMessage('', 'ОПА, ВРЕМЯ ВЫШЛО. НИЧЬЯ ПОЛУЧАЕТСЯ');
             document.getElementById('leave').innerText = 'Просто вернуться в лобби';
         } else if (whoami() === winner) {
             if (isRcrPlayer(winner)) {
@@ -224,7 +227,7 @@
             switch (result) {
                 case 'MISSED':
                     chatMessage(opponent, 'Мимо!');
-                    chatMessage('', 'ХОД ПЕРЕХОДИТ К ' + opponent + '\n');
+                    chatMessage('', 'ХОД ПЕРЕХОДИТ К ' + opponent);
                     currentTurn = opponent;
                     setTurn('Ход: ' + currentTurn);
                     myFieldBlocks.setInactive(false);
@@ -232,11 +235,11 @@
                     break;
                 case 'WOUNDED':
                     chatMessage(opponent, 'Ранил');
-                    chatMessage('', attacker + ' продолжает' + '\n');
+                    chatMessage('', attacker + ' продолжает');
                     break;
                 case 'KILLED':
                     chatMessage(opponent, 'Убил');
-                    chatMessage('', attacker + ' продолжает' + '\n');
+                    chatMessage('', attacker + ' продолжает');
                     break;
                 case 'ALL_KILLED':
                     chatMessage(opponent, 'Убил');
@@ -251,7 +254,7 @@
             switch (result) {
                 case 'MISSED':
                     chatMessage(opponent, 'Мимо!');
-                    chatMessage('', 'ХОД ПЕРЕХОДИТ К ' + opponent + '\n');
+                    chatMessage('', 'ХОД ПЕРЕХОДИТ К ' + opponent);
                     currentTurn = opponent;
                     setTurn('Ход: ' + currentTurn);
                     myFieldBlocks.setInactive(true);
@@ -259,11 +262,11 @@
                     break;
                 case 'WOUNDED':
                     chatMessage(opponent, 'Ранил');
-                    chatMessage('', attacker + ' продолжает' + '\n');
+                    chatMessage('', attacker + ' продолжает');
                     break;
                 case 'KILLED':
                     chatMessage(opponent, 'Убил');
-                    chatMessage('', attacker + ' продолжает' + '\n');
+                    chatMessage('', attacker + ' продолжает');
                     break;
                 case 'ALL_KILLED':
                     chatMessage(opponent, 'Убил');
@@ -316,7 +319,7 @@
                     }
                     break;
                 case 'CHAT_MESSAGE':
-                    chatMessage(cmd.playerName, cmd.message);
+                    chatMessage(cmd.playerName, cmd.message + '\n');
                     break;
                 case 'PLAYER_LEAVED':
                     if (!isGameFinished) {
