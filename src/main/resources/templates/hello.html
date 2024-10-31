@@ -1,3 +1,15 @@
+<!--
+    "Начиналось все весело, а закончилось не очень"
+    Распечатаю наверно себе листик с этой фразой, и повешу радом с монитором.
+    Ну а че, настройки все пришлось убрать, конфиги подсократить.
+    Сеньор, миддл этот... чем им не понравилась малипуська и стандарчелло... ну не знаю.
+    Мне теперь не нравится этот морской бой...
+
+    Кто сюда заглянет, знайте: тут много гонокодищща. И если вы найдёте какой-то баг,
+    который крашит игру, то сообщите плиз в телегу @iisador.
+    Малинка и так на ладан дышит, а если во время нагрузки дочь начнет сейлор мун смотреть, то вообще помрёт.
+
+-->
 <!DOCTYPE html>
 <html lang="ru">
 <head>
@@ -40,12 +52,10 @@
         let password = document.getElementById("password").value;
 
         if (validate(username, password)) {
-            // Create an object to represent the form data
             const formData = new URLSearchParams();
             formData.append("j_username", username);
             formData.append("j_password", password);
 
-            // Make an HTTP POST request using fetch against j_security_check endpoint
             fetch("j_security_check", {
                 method: "POST",
                 body: formData,
