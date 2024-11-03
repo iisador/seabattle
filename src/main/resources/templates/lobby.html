@@ -311,7 +311,7 @@
             <div id="newGameWrapper">
                 <div id="gameConfig">
                     <div id="gameConfigTitle"><span class="midTitle">Начать новую игру</span></div>
-                    <div id="gameTypeLabel"><label for="gameConf">Предустановка</label></div>
+                    <div id="gameTypeLabel"><label for="gameConf">Место битвы</label></div>
                     <div id="gameTypeConf"><select id="gameConf" name="conf" onchange="resetGame()">
                             {#each gameConfigList}
                                 <option value="{it.id}">{it.name}</option>
@@ -362,10 +362,10 @@
                 <ul>
                     <li>Выбираем предустановленные настройки:</li>
                     <ul>
-                        <li>Middle: правила КРаБР. Корабли не касаются друг друга, даже углами. Поле размером 5х5. 2 однопалубника, 1 двухпалубник, 1
+                        <li>Море: правила КРаБР. Корабли не касаются друг друга, даже углами. Поле размером 5х5. 2 однопалубника, 1 двухпалубник, 1
                             трёхпалубник.
                         </li>
-                        <li>Senior: тут прямо как в школе на химии играли: поле 10х10, полный набор кораблей. Корабли также не могут касаться друг
+                        <li>Океан: тут прямо как в школе на химии играли: поле 10х10, полный набор кораблей. Корабли также не могут касаться друг
                             друга.
                         </li>
                     </ul>
@@ -398,38 +398,45 @@
                     <li>Если время игры вышло - побеждает игрок с наибольшим количеством попаданий.</li>
                 </ul>
             </div>
-            <div id="rightWrapper"></div>
             <div id="bottomWrapper">
                 <button id="toLobby" class="standardBtn" onclick="hideHelp('helpModal')">скрыть справку</button>
             </div>
         </div>
     </div>
     <div id="gameTypeHelpModal" class="modal-window"
-         style="line-height: normal;font-size: 14px;position: relative;width: 300px;top: -475px;left: -390px;">
-        <div>
-            <ul>
-                <li>Middle:
-                    <ul>
-                        <li>Корабли не касаются друг друга, даже углами.</li>
-                        <li>Время на игру: 5 мин.</li>
-                        <li>Размер поля: 5х5.</li>
-                        <li>Однопалубный: 2 шт.</li>
-                        <li>Двухпалубный: 1 шт.</li>
-                        <li>Трёхпалубный: 1 шт.</li>
+         style="line-height: normal;font-size: 14px;position: relative;width: 500px; height: 250px;top: -700px;left: -550px;">
+        <div id="gameTypeHelpText">
+            <span id="conf1Title" style="font-family: ST-Nizhegorodsky;font-size: x-large;margin-bottom: -15px">Море:</span>
+            <span id="conf1DescCommon" style="margin: -10px">
+                <ul>
+                    <li>Корабли не касаются друг друга.</li>
+                    <li>Время на игру: 5 мин.</li>
+                    <li>Размер поля: 5х5.</li>
                     </ul>
-                </li>
-                <li>Senior:
-                    <ul>
-                        <li>Корабли не касаются друг друга, даже углами.</li>
-                        <li>Время на игру: 10 мин.</li>
-                        <li>Размер поля: 10х10.</li>
-                        <li>Однопалубный: 4 шт.</li>
-                        <li>Двухпалубный: 3 шт.</li>
-                        <li>Трёхпалубный: 2 шт.</li>
-                        <li>Четырёхпалубный: 1 шт.</li>
+            </span>
+            <span id="conf1DescShips" style="margin: -10px">
+                <ul>
+                    <li>Однопалубный: 2 шт.</li>
+                    <li>Двухпалубный: 1 шт.</li>
+                    <li>Трёхпалубный: 1 шт.</li>
+                </ul>
+            </span>
+            <span id="conf2Title" style="font-family: ST-Nizhegorodsky;font-size: x-large;margin-bottom: -15px">Океан:</span>
+            <span id="conf2DescCommon" style="margin: -10px">
+                <ul>
+                    <li>Корабли не касаются друг друга.</li>
+                    <li>Время на игру: 10 мин.</li>
+                    <li>Размер поля: 10х10.</li>
                     </ul>
-                </li>
-            </ul>
+            </span>
+            <span id="conf2DescShips" style="margin: -10px">
+                <ul>
+                    <li>Однопалубный: 4 шт.</li>
+                    <li>Двухпалубный: 3 шт.</li>
+                    <li>Трёхпалубный: 2 шт.</li>
+                    <li>Четырёхпалубный: 1 шт.</li>
+                </ul>
+            </span>
         </div>
         <button id="toLobby" class="standardBtn" onclick="hideHelp('gameTypeHelpModal')">скрыть</button>
     </div>

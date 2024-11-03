@@ -17,6 +17,15 @@
     align-items: center;
 }
 
+.simpleBlockMarked {
+    background: white;
+    border-radius: 5px;
+    border: 3px solid black;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+}
+
 .blockMarked {
     background: #bcc7dd;
     border-radius: 5px;

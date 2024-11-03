@@ -1,6 +1,8 @@
 package ru.isador.games.seabattle.web.game;
 
+import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class Ship {
 
@@ -16,6 +18,16 @@ public class Ship {
 
     public List<Deck> getDecks() {
         return decks;
+    }
+
+    public Collection<Tuple> getWrappingPoints() {
+        List<Tuple> shipCoords = decks.stream()
+                                     .map(Deck::getTuple)
+                                     .toList();
+        return decks.stream()
+                   .flatMap(d -> d.getWrappingCells().stream())
+                   .filter(tuple -> !shipCoords.contains(tuple))
+                   .collect(Collectors.toSet());
     }
 
     public boolean isAlive() {

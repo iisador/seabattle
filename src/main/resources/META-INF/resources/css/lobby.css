@@ -179,4 +179,45 @@ div#help {
     flex-direction: column;
     align-items: center;
     margin-top: 30px;
+    line-height: 16px;
+    font-size: medium;
+}
+
+div#gameTypeHelpText {
+    display: grid;
+    grid-template-rows: auto auto auto auto;
+    grid-template-columns: auto auto;
+    gap: 10px;
+}
+
+span#conf1Title {
+    grid-row: 1;
+    grid-column-start: 1;
+    grid-column-end: 2;
+}
+
+span#conf1DescCommon {
+    grid-row: 2;
+    grid-column: 1;
+}
+
+span#conf1DescShips {
+    grid-row: 2;
+    grid-column: 2;
+}
+
+span#conf2Title {
+    grid-row: 3;
+    grid-column-start: 1;
+    grid-column-end: 2;
+}
+
+span#conf2DescCommon {
+    grid-row: 4;
+    grid-column: 1;
+}
+
+span#conf2DescShips {
+    grid-row: 4;
+    grid-column: 2;
 }

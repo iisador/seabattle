@@ -5,19 +5,19 @@ insert into parameters_list(name, descr, type) values('CORNERS_ALLOWED', 'Угл
 insert into parameters_list(name, descr, type) values('SHIPS', 'Корабли', 'string');
 insert into parameters_list(name, descr, type) values('GAME_DURATION_MINUTES', 'Длительность игры', 'int');
 
-insert into config(id, name, predefined, ord) values (gen_random_uuid(), 'Senior', true, 2);
-insert into game_config_params(config_id, name, value) values((select id from config where name = 'Senior'), 'FIELD_SIZE', '10');
-insert into game_config_params(config_id, name, value) values((select id from config where name = 'Senior'), 'BORDERS_ALLOWED', 'true');
-insert into game_config_params(config_id, name, value) values((select id from config where name = 'Senior'), 'CORNERS_ALLOWED', 'false');
-insert into game_config_params(config_id, name, value) values((select id from config where name = 'Senior'), 'SHIPS', '1x4;2x3;3x2;4x1');
-insert into game_config_params(config_id, name, value) values((select id from config where name = 'Senior'), 'GAME_DURATION_MINUTES', '10');
+insert into config(id, name, predefined, ord) values (gen_random_uuid(), 'Океан', true, 2);
+insert into game_config_params(config_id, name, value) values((select id from config where name = 'Океан'), 'FIELD_SIZE', '10');
+insert into game_config_params(config_id, name, value) values((select id from config where name = 'Океан'), 'BORDERS_ALLOWED', 'true');
+insert into game_config_params(config_id, name, value) values((select id from config where name = 'Океан'), 'CORNERS_ALLOWED', 'false');
+insert into game_config_params(config_id, name, value) values((select id from config where name = 'Океан'), 'SHIPS', '1x4;2x3;3x2;4x1');
+insert into game_config_params(config_id, name, value) values((select id from config where name = 'Океан'), 'GAME_DURATION_MINUTES', '10');
 
-insert into config(id, name, predefined, ord) values (gen_random_uuid(), 'Middle', true, 1);
-insert into game_config_params(config_id, name, value) values((select id from config where name = 'Middle'), 'FIELD_SIZE', '5');
-insert into game_config_params(config_id, name, value) values((select id from config where name = 'Middle'), 'BORDERS_ALLOWED', 'true');
-insert into game_config_params(config_id, name, value) values((select id from config where name = 'Middle'), 'CORNERS_ALLOWED', 'false');
-insert into game_config_params(config_id, name, value) values((select id from config where name = 'Middle'), 'SHIPS', '1x2;2x1;3x1');
-insert into game_config_params(config_id, name, value) values((select id from config where name = 'Middle'), 'GAME_DURATION_MINUTES', '5');
+insert into config(id, name, predefined, ord) values (gen_random_uuid(), 'Море', true, 1);
+insert into game_config_params(config_id, name, value) values((select id from config where name = 'Море'), 'FIELD_SIZE', '5');
+insert into game_config_params(config_id, name, value) values((select id from config where name = 'Море'), 'BORDERS_ALLOWED', 'true');
+insert into game_config_params(config_id, name, value) values((select id from config where name = 'Море'), 'CORNERS_ALLOWED', 'false');
+insert into game_config_params(config_id, name, value) values((select id from config where name = 'Море'), 'SHIPS', '1x2;2x1;3x1');
+insert into game_config_params(config_id, name, value) values((select id from config where name = 'Море'), 'GAME_DURATION_MINUTES', '5');
 
 insert into config(id, name, predefined, ord) values (gen_random_uuid(), 'Малипуська', false, 3);
 insert into game_config_params(config_id, name, value) values((select id from config where name = 'Малипуська'), 'FIELD_SIZE', '3');

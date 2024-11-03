@@ -309,6 +309,7 @@ class Field {
                 }
                 if (matrix[i][j] === 'w') {
                     block.appendChild(this.getWounded())
+                    block.className = 'simpleBlockMarked';
                 }
                 if (matrix[i][j] === 'k') {
                     const direction = this.getDirection(matrix, i, j);

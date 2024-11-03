@@ -48,10 +48,17 @@
         sendCommand('JOINED_GAME', { playerName: whoami() });
     }
 
-    function setTurn(turn, size = 'xx-large') {
+    function setTurn(turn, additionalText, size = 'xx-large') {
         const turnSpan = document.getElementById('turnSpan');
         turnSpan.innerHTML = turn;
         turnSpan.style.fontSize = size;
+
+        if (additionalText) {
+            const addText = document.getElementById('titleSpanAdditional');
+            addText.innerHTML = turn;
+            turnSpan.innerHTML = additionalText;
+            turnSpan.className = 'bigTitleBlink';
+        }
     }
 
     function chatMessage(playerName, m) {
@@ -108,19 +115,19 @@
         } else if (whoami() === winner) {
             if (isRcrPlayer(winner)) {
                 chatMessage('', 'Поздравляем с победой! КРаБР-2025 отправляется в ' + winner + '!');
-                setTurn('Поздравляем с победой! КР<span class="midTitle">А</span>БР-2025 отправляется в ' + winner + '!', 'xxx-large');
+                setTurn('Поздравляем с победой!', 'КР<span class="midTitle">А</span>БР-2025 отправляется в ' + winner + '!', 'xxx-large');
             } else {
                 chatMessage('', 'УРА-А-А, ' + winner + ' ПОБЕЖДАЕТ!!!');
-                setTurn('УРА! Поздравляем с победой', 'xxx-large');
+                setTurn('УРА! Поздравляем с победой', '', 'xxx-large');
             }
             document.getElementById('leave').innerText = 'Победно вернуться в лобби';
         } else {
             if (isRcrPlayer(winner)) {
                 chatMessage('', 'Поздравляем с победой! КРаБР-2025 отправляется в ' + winner + '!');
-                setTurn('Поздравляем с победой! КР<span class="midTitle">А</span>БР-2025 отправляется в ' + winner + '!', 'xxx-large');
+                setTurn('Поздравляем с победой!', 'КР<span class="midTitle">А</span>БР-2025 отправляется в ' + winner + '!', 'xxx-large');
             } else {
-                chatMessage('', 'Победил ' + winner + '! Поздравляем!');
-                setTurn('Победил ' + winner + '! Поздравляем! Попытаете счастья еще раз?', 'xxx-large');
+                chatMessage('', 'Победил(а) ' + winner + '! Поздравляем!');
+                setTurn('Победил(а) ' + winner + '! Поздравляем! Попытаете счастья еще раз?', '', 'xxx-large');
             }
             document.getElementById('leave').innerText = 'Вернуться к выбору игры';
         }
@@ -367,6 +374,7 @@
         <div id="gameWrapper">
             <div id="title">
                 <span id="titleSpan" class="bigTitle">Ожидание игрока</span>
+                <span id="titleSpanAdditional" class="bigTitle"></span>
             </div>
             <div id="turn">
                 <span id="turnSpan" class="midTitle"></span>

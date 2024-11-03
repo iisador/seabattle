@@ -43,10 +43,17 @@
         }
     }
 
-    function setTurn(turn, size = 'xx-large') {
+    function setTurn(turn, additionalText, size = 'xx-large') {
         const turnSpan = document.getElementById('turnSpan');
         turnSpan.innerHTML = turn;
         turnSpan.style.fontSize = size;
+
+        if (additionalText) {
+            const addText = document.getElementById('titleSpanAdditional');
+            addText.innerHTML = turn;
+            turnSpan.innerHTML = additionalText;
+            turnSpan.className = 'bigTitleBlink';
+        }
     }
 
     function chatMessage(playerName, m) {
@@ -90,10 +97,10 @@
         } else {
             if (isRcrPlayer(winner)) {
                 chatMessage('', 'Поздравляем с победой! КРаБР-2025 отправляется в ' + winner + '!');
-                setTurn('Поздравляем с победой! КР<span class="midTitle">А</span>БР-2025 отправляется в ' + winner + '!', 'xxx-large');
+                setTurn('Поздравляем с победой!', 'КР<span class="midTitle">А</span>БР-2025 отправляется в ' + winner + '!', 'xxx-large');
             } else {
                 chatMessage('', 'УРА-А-А, ' + winner + ' ПОБЕЖДАЕТ!!!');
-                setTurn('УРА! Поздравляем с победой', 'xxx-large');
+                setTurn('Победил(а) ' + winner + '! Поздравляем!', '', 'xxx-large');
             }
         }
 
@@ -252,6 +259,8 @@
                             player2FieldBlocks.drawField(document.getElementById('player2Field'));
                             player2FieldBlocks.drawBattlefield(cmd.player2.matrix, 'ship');
                             drawStats(document.getElementById('player2Stats'), cmd.player2.ships, document.getElementById('player2StatsTitleSpan'), 'ФЛОТ');
+
+                            gameStarted(cmd.player1.name, cmd.player1.name, cmd.player2.name);
                         }
 
                         if (cmd.timeRemaining) {
@@ -321,6 +330,7 @@
         <div id="gameWrapper">
             <div id="title">
                 <span id="titleSpan" class="bigTitle">Ожидание игрока</span>
+                <span id="titleSpanAdditional" class="bigTitle"></span>
             </div>
             <div id="turn">
                 <span id="turnSpan" class="midTitle"></span>

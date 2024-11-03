@@ -78,9 +78,10 @@ div#title {
     grid-column-start: 1;
     grid-column-end: 4;
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
     align-items: center;
     justify-content: space-around;
+    line-height: normal;
 }
 
 div#turn {

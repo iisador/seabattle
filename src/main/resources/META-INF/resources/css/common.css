@@ -24,6 +24,18 @@ body {
     font-size: xxx-large;
 }
 
+.bigTitleBlink {
+    font-family: ST-Nizhegorodsky;
+    font-size: xxx-large;
+    animation: blinker 1s linear infinite;
+}
+
+@keyframes blinker {
+    50% {
+        opacity: 0;
+    }
+}
+
 .midTitle {
     font-family: ST-Nizhegorodsky;
     font-size: xx-large;

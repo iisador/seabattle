@@ -40,6 +40,7 @@ public class Squadron {
                     result = FireResult.KILLED;
                     ship.getDecks()
                         .forEach(d -> matrix[d.getX()][d.getY()] = 'k');
+                    wrapShip(ship);
                 }
             }
         }
@@ -52,6 +53,20 @@ public class Squadron {
             matrix[x][y] = '.';
         }
         return result;
+    }
+
+    private void wrapShip(Ship ship) {
+        List<Tuple> wrappingPoints = ship.getWrappingPoints().stream()
+                                         .filter(this::isPointInGrid)
+                                         .toList();
+        for (Tuple point : wrappingPoints) {
+            matrix[point.x()][point.y()] = '.';
+        }
+    }
+
+    private boolean isPointInGrid(Tuple t) {
+        return t.x() >= 0 && t.x() < matrix.length
+               && t.y() >= 0 && t.y() < matrix.length;
     }
 
     public boolean isAlive() {
