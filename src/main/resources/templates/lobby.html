@@ -230,11 +230,13 @@
 
     function showHelp(e) {
         document.getElementById('gameWrapper').style.filter = 'grayscale(1)';
+        document.getElementById(e).style.display = 'flex';
         document.getElementById(e).style.visibility = 'visible';
     }
 
     function hideHelp(e) {
         document.getElementById('gameWrapper').style.filter = 'grayscale(0)';
+        document.getElementById(e).style.display = 'none';
         document.getElementById(e).style.visibility = 'hidden';
     }
 
@@ -398,13 +400,11 @@
                     <li>Если время игры вышло - побеждает игрок с наибольшим количеством попаданий.</li>
                 </ul>
             </div>
-            <div id="bottomWrapper">
-                <button id="toLobby" class="standardBtn" onclick="hideHelp('helpModal')">скрыть справку</button>
-            </div>
+            <button id="toLobby" class="standardBtn" onclick="hideHelp('helpModal')">скрыть справку</button>
         </div>
     </div>
     <div id="gameTypeHelpModal" class="modal-window"
-         style="line-height: normal;font-size: 14px;position: relative;width: 500px; height: 250px;top: -700px;left: -550px;">
+         style="line-height: normal;font-size: 14px;position: relative;width: 500px; height: 250px;top: -700px;left: -550px;display: none">
         <div id="gameTypeHelpText">
             <span id="conf1Title" style="font-family: ST-Nizhegorodsky;font-size: x-large;margin-bottom: -15px">Море:</span>
             <span id="conf1DescCommon" style="margin: -10px">
