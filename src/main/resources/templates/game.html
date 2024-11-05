@@ -111,7 +111,6 @@
         if (!winner) {
             setTurn('НУУУ... НИЧЬЯ. ВРЕМЯ ВЫШЛО. НУЖНО ПЕРЕИГРЫВАТЬ...', 'xxx-large');
             chatMessage('', 'ОПА, ВРЕМЯ ВЫШЛО. НИЧЬЯ ПОЛУЧАЕТСЯ');
-            document.getElementById('leave').innerText = 'Просто вернуться в лобби';
         } else if (whoami() === winner) {
             if (isRcrPlayer(winner)) {
                 chatMessage('', 'Поздравляем с победой! КРаБР-2025 отправляется в ' + winner + '!');
@@ -120,7 +119,6 @@
                 chatMessage('', 'УРА-А-А, ' + winner + ' ПОБЕЖДАЕТ!!!');
                 setTurn('УРА! Поздравляем с победой', '', 'xxx-large');
             }
-            document.getElementById('leave').innerText = 'Победно вернуться в лобби';
         } else {
             if (isRcrPlayer(winner)) {
                 chatMessage('', 'Поздравляем с победой! КРаБР-2025 отправляется в ' + winner + '!');
@@ -129,7 +127,6 @@
                 chatMessage('', 'Победил(а) ' + winner + '! Поздравляем!');
                 setTurn('Победил(а) ' + winner + '! Поздравляем! Попытаете счастья еще раз?', '', 'xxx-large');
             }
-            document.getElementById('leave').innerText = 'Вернуться к выбору игры';
         }
 
         if (whoami() !== winner) {
@@ -408,7 +405,7 @@
             </div>
 
             <div id="bottomButtons">
-                <button id="leave" class="standardBtn" onclick="leaveGame()">Завершить игру</button>
+                <button id="leave" class="standardBtn" onclick="leaveGame()">Вернуться к выбору игры</button>
             </div>
 
             <div id="chat">

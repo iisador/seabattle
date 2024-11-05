@@ -120,6 +120,33 @@
 
         document.getElementById('btnNewGame').disabled = true;
         document.getElementById('btnNewGame').innerText = 'Надо расставить корабли';
+
+        document.getElementById('conf1Title').innerText = document.getElementById('gameConf').options[document.getElementById('gameConf').selectedIndex].text + ':';
+        if(selectedConfig === 'f3012696-8f72-4b65-af3a-941825533994') {
+            document.getElementById('conf1DescCommon').innerHTML = `<ul>
+    <li>Корабли не касаются друг друга.</li>
+    <li>Время на игру: 5 мин.</li>
+    <li>Размер поля: 5х5.</li>
+</ul>`;
+            document.getElementById('conf1DescShips').innerHTML = `<ul>
+    <li>Однопалубный: 2 шт.</li>
+    <li>Двухпалубный: 1 шт.</li>
+    <li>Трёхпалубный: 1 шт.</li>
+</ul>`;
+        }
+        if(selectedConfig === 'c4885e0f-3b72-42dc-adf5-e8f099b78e05') {
+            document.getElementById('conf1DescCommon').innerHTML = `<ul>
+    <li>Корабли не касаются друг друга.</li>
+    <li>Время на игру: 10 мин.</li>
+    <li>Размер поля: 10х10.</li>
+</ul>`;
+            document.getElementById('conf1DescShips').innerHTML = `<ul>
+    <li>Однопалубный: 4 шт.</li>
+    <li>Двухпалубный: 3 шт.</li>
+    <li>Трёхпалубный: 2 шт.</li>
+    <li>Четырёхпалубный: 1 шт.</li>
+</ul>`;
+        }
     }
 
     function random(max) {
@@ -323,7 +350,9 @@
                             <input type="hidden" id="gameConfig_{it.id}" value="{it.config}">
                         {/each}</div>
                     <div id="gameTypeHelp">
-                        <span class="midTitle" style="cursor: pointer;" onclick="showHelp('gameTypeHelpModal')">?</span>
+                        <span id="conf1Title"></span>
+                        <span id="conf1DescCommon"></span>
+                        <span id="conf1DescShips"></span>
                     </div>
                     <div id="battlefieldLabel"><label>Расстановка кораблей</label></div>
                     <div id="battlefieldWrapper"></div>
@@ -405,39 +434,6 @@
     </div>
     <div id="gameTypeHelpModal" class="modal-window"
          style="line-height: normal;font-size: 14px;position: relative;width: 500px; height: 250px;top: -700px;left: -550px;display: none">
-        <div id="gameTypeHelpText">
-            <span id="conf1Title" style="font-family: ST-Nizhegorodsky;font-size: x-large;margin-bottom: -15px">Море:</span>
-            <span id="conf1DescCommon" style="margin: -10px">
-                <ul>
-                    <li>Корабли не касаются друг друга.</li>
-                    <li>Время на игру: 5 мин.</li>
-                    <li>Размер поля: 5х5.</li>
-                    </ul>
-            </span>
-            <span id="conf1DescShips" style="margin: -10px">
-                <ul>
-                    <li>Однопалубный: 2 шт.</li>
-                    <li>Двухпалубный: 1 шт.</li>
-                    <li>Трёхпалубный: 1 шт.</li>
-                </ul>
-            </span>
-            <span id="conf2Title" style="font-family: ST-Nizhegorodsky;font-size: x-large;margin-bottom: -15px">Океан:</span>
-            <span id="conf2DescCommon" style="margin: -10px">
-                <ul>
-                    <li>Корабли не касаются друг друга.</li>
-                    <li>Время на игру: 10 мин.</li>
-                    <li>Размер поля: 10х10.</li>
-                    </ul>
-            </span>
-            <span id="conf2DescShips" style="margin: -10px">
-                <ul>
-                    <li>Однопалубный: 4 шт.</li>
-                    <li>Двухпалубный: 3 шт.</li>
-                    <li>Трёхпалубный: 2 шт.</li>
-                    <li>Четырёхпалубный: 1 шт.</li>
-                </ul>
-            </span>
-        </div>
         <button id="toLobby" class="standardBtn" onclick="hideHelp('gameTypeHelpModal')">скрыть</button>
     </div>
 </div>
