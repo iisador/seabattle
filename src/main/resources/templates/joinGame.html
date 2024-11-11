@@ -7,6 +7,7 @@
     <link href="/css/game.css" rel="stylesheet">
     <link href="/css/field.css" rel="stylesheet">
     <link href="/css/lobby.css" rel="stylesheet">
+    <script src="/js/common.js"></script>
     <script src="/js/field.js"></script>
     <script src="/js/game.js"></script>
 
@@ -32,12 +33,7 @@
         playerField.drawField(document.getElementById('battlefieldWrapper'));
 
         document.getElementById('btnJoin').disabled = true;
-        document.getElementById('btnJoin').innerText = 'Надо расставить корабли';
-    }
-
-    // Нет времени объяснять! Дублироваем код!
-    function random(max) {
-        return Math.floor(Math.random() * max);
+        document.getElementById('btnJoin').innerText = 'Расставьте корабли';
     }
 
     // Ваще в тупую расстанавливаем.
@@ -174,7 +170,7 @@
                     </div>
                     <div id="configButtons">
                         <button id="toLobby" class="standardBtn" type="button" onclick="window.location.replace('/lobby/')">Выйти</button>
-                        <button id="btnJoin" class="standardBtn" disabled onmousedown="joinGame()">Надо расставить корабли</button>
+                        <button id="btnJoin" class="standardBtn" disabled onmousedown="joinGame()">Расставьте корабли</button>
                     </div>
                 </div>
             </div>

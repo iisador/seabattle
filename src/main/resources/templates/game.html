@@ -6,12 +6,14 @@
     <link href="/css/common.css" rel="stylesheet">
     <link href="/css/game.css" rel="stylesheet">
     <link href="/css/field.css" rel="stylesheet">
-    <script src="/js/field.js"></script>
     <script src="/js/common.js"></script>
+    <script src="/js/field.js"></script>
+    <script src="/js/aud.js"></script>
 
     <title>{msg:game_title}</title>
 </head>
 <script>
+    const sounds = new Sounds();
     const myShips = JSON.parse('{myShips}');
     let blockSize = '33px';
     let myFieldBlocks = new Field(myShips.length, blockSize, 'my', false);
@@ -230,6 +232,7 @@
             drawStats(document.getElementById('enemyStats'), stats, 'enemyShip');
             switch (result) {
                 case 'MISSED':
+                    sounds.playRandomBulk();
                     chatMessage(opponent, 'Мимо!');
                     chatMessage('', 'ХОД ПЕРЕХОДИТ К ' + opponent);
                     currentTurn = opponent;
@@ -238,10 +241,12 @@
                     enemyFieldBlocks.setInactive(true);
                     break;
                 case 'WOUNDED':
+                    sounds.playRandomBang();
                     chatMessage(opponent, 'Ранил');
                     chatMessage('', attacker + ' продолжает');
                     break;
                 case 'KILLED':
+                    sounds.playRandomKill();
                     chatMessage(opponent, 'Убил');
                     chatMessage('', attacker + ' продолжает');
                     break;

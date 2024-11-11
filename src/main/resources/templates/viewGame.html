@@ -8,10 +8,12 @@
     <link href="/css/field.css" rel="stylesheet">
     <script src="/js/field.js"></script>
     <script src="/js/common.js"></script>
+    <script src="/js/aud.js"></script>
 
     <title>{msg:game_title}</title>
 </head>
 <script>
+    const sounds = new Sounds();
     let player1Name;
     let player2Name;
     let blockSize = '33px';
@@ -209,15 +211,18 @@
 
         switch (result) {
             case 'MISSED':
+                sounds.playRandomBulk();
                 chatMessage(opponent, 'Мимо!');
                 chatMessage('', 'Ход переходит К ' + opponent);
                 setTurn('Ход: ' + opponent);
                 break;
             case 'WOUNDED':
+                sounds.playRandomBang();
                 chatMessage(opponent, 'Ранил');
                 chatMessage('', attacker + ' продолжает');
                 break;
             case 'KILLED':
+                sounds.playRandomKill();
                 chatMessage(opponent, 'Убил');
                 chatMessage('', attacker + ' продолжает');
                 break
