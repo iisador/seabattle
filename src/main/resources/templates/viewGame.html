@@ -89,6 +89,7 @@
         chatMessage('', 'Игра началась!');
         setTurn('Ход: ' + turn);
         updateTitle('БИТВА ' + player1 + ' vs ' + player2);
+        sounds.playRandomStart();
     }
 
     function gameFinished(winner, player1, player2) {
@@ -104,6 +105,7 @@
                 chatMessage('', 'УРА-А-А, ' + winner + ' ПОБЕЖДАЕТ!!!');
                 setTurn('Победил(а) ' + winner + '! Поздравляем!', '', 'xxx-large');
             }
+            sounds.playRandomFinish();
         }
 
         player1FieldBlocks = new Field(player1.matrix.length, blockSize, 'player1', false);

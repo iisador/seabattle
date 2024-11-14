@@ -2,6 +2,9 @@ class Sounds {
     #bulks = [];
     #bangs = [];
     #kills = [];
+    #finishes = [];
+    #fails = [];
+    #starts = [];
 
     #nowPlaying;
 
@@ -16,6 +19,13 @@ class Sounds {
         this.#bangs.push(new Audio('/audio/bang3.ogg'));
 
         this.#kills.push(new Audio('/audio/kill1.ogg'));
+
+        this.#finishes.push(new Audio('/audio/finish.ogg'));
+
+        this.#fails.push(new Audio('/audio/fail1.ogg'));
+        this.#fails.push(new Audio('/audio/fail2.ogg'));
+
+        this.#starts.push(new Audio('/audio/start.ogg'));
     }
 
     playRandom(arr) {
@@ -38,5 +48,17 @@ class Sounds {
 
     playRandomKill() {
         this.playRandom(this.#kills);
+    }
+
+    playRandomFinish() {
+        this.playRandom(this.#finishes);
+    }
+
+    playRandomFail() {
+        this.playRandom(this.#fails);
+    }
+
+    playRandomStart() {
+        this.playRandom(this.#starts);
     }
 }

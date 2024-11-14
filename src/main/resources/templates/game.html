@@ -103,7 +103,7 @@
             document.getElementById('enemyTitleSpan').innerText = player1;
             updateTitle('БИТВА ' + whoami() + ' vs ' + player1);
         }
-
+        sounds.playRandomStart();
         document.addEventListener('mousedown', clickListener);
     }
 
@@ -121,13 +121,16 @@
                 chatMessage('', 'УРА-А-А, ' + winner + ' ПОБЕЖДАЕТ!!!');
                 setTurn('УРА! Поздравляем с победой', '', 'xxx-large');
             }
+            sounds.playRandomFinish();
         } else {
             if (isRcrPlayer(winner)) {
                 chatMessage('', 'Поздравляем с победой! КРаБР-2025 отправляется в ' + winner + '!');
                 setTurn('Поздравляем с победой!', 'КР<span class="midTitle">А</span>БР-2025 отправляется в ' + winner + '!', 'xxx-large');
+                sounds.playRandomFinish();
             } else {
                 chatMessage('', 'Победил(а) ' + winner + '! Поздравляем!');
                 setTurn('Победил(а) ' + winner + '! Поздравляем! Попытаете счастья еще раз?', '', 'xxx-large');
+                sounds.playRandomFail();
             }
         }
 
@@ -262,6 +265,7 @@
             drawStats(document.getElementById('myStats'), stats, 'ship');
             switch (result) {
                 case 'MISSED':
+                    sounds.playRandomBulk();
                     chatMessage(opponent, 'Мимо!');
                     chatMessage('', 'ХОД ПЕРЕХОДИТ К ' + opponent);
                     currentTurn = opponent;
@@ -270,10 +274,12 @@
                     enemyFieldBlocks.setInactive(false);
                     break;
                 case 'WOUNDED':
+                    sounds.playRandomBang();
                     chatMessage(opponent, 'Ранил');
                     chatMessage('', attacker + ' продолжает');
                     break;
                 case 'KILLED':
+                    sounds.playRandomKill();
                     chatMessage(opponent, 'Убил');
                     chatMessage('', attacker + ' продолжает');
                     break;
