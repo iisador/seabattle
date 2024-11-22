@@ -103,7 +103,7 @@
             document.getElementById('enemyTitleSpan').innerText = player1;
             updateTitle('БИТВА ' + whoami() + ' vs ' + player1);
         }
-        sounds.playRandomStart();
+
         document.addEventListener('mousedown', clickListener);
     }
 
@@ -115,8 +115,8 @@
             chatMessage('', 'ОПА, ВРЕМЯ ВЫШЛО. НИЧЬЯ ПОЛУЧАЕТСЯ');
         } else if (whoami() === winner) {
             if (isRcrPlayer(winner)) {
-                chatMessage('', 'Поздравляем с победой! КРаБР-2025 отправляется в ' + winner + '!');
-                setTurn('Поздравляем с победой!', 'КР<span class="midTitle">А</span>БР-2025 отправляется в ' + winner + '!', 'xxx-large');
+                chatMessage('', 'Поздравляем с победой! КРаБР отправляется в ' + winner + '!');
+                setTurn('Поздравляем с победой!', 'КР<span class="midTitle">А</span>БР отправляется в ' + winner + '!', 'xxx-large');
             } else {
                 chatMessage('', 'УРА-А-А, ' + winner + ' ПОБЕЖДАЕТ!!!');
                 setTurn('УРА! Поздравляем с победой', '', 'xxx-large');
@@ -124,8 +124,8 @@
             sounds.playRandomFinish();
         } else {
             if (isRcrPlayer(winner)) {
-                chatMessage('', 'Поздравляем с победой! КРаБР-2025 отправляется в ' + winner + '!');
-                setTurn('Поздравляем с победой!', 'КР<span class="midTitle">А</span>БР-2025 отправляется в ' + winner + '!', 'xxx-large');
+                chatMessage('', 'Поздравляем с победой! КРаБР отправляется в ' + winner + '!');
+                setTurn('Поздравляем с победой!', 'КР<span class="midTitle">А</span>БР отправляется в ' + winner + '!', 'xxx-large');
                 sounds.playRandomFinish();
             } else {
                 chatMessage('', 'Победил(а) ' + winner + '! Поздравляем!');
