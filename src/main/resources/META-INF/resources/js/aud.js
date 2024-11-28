@@ -35,6 +35,7 @@ class Sounds {
             this.#nowPlaying.currentTime = 0;
         }
         this.#nowPlaying = arr[i];
+        this.#nowPlaying.volume = 0.5;
         this.#nowPlaying.play();
     }
 
