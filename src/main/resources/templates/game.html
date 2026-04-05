@@ -144,7 +144,7 @@
     }
 
     function playerLeaved(leavedPlayer) {
-        chatMessage('', leavedPlayer + ' БЕЖАЛ ПОДЖАВ ХВОСТ! ' + whoami() + ' ПОБЕЖДАЕТ!!!');
+        chatMessage('', leavedPlayer + ' БЕЖАЛ ПОДЖАВ ХВОСТ!');
         document.removeEventListener('click', clickListener);
     }
 
@@ -320,17 +320,17 @@
                 case 'GAME_FINISHED':
                     if (!cmd.winner) {
                         if (cmd.player1.name === whoami()) {
-                            gameFinished(cmd.winner, cmd.player2.field, cmd.player2.matrix);
+                            gameFinished(cmd.player2.name, cmd.player2.field, cmd.player2.matrix);
                         } else {
-                            gameFinished(cmd.winner, cmd.player1.field, cmd.player1.matrix);
+                            gameFinished(cmd.player1.name, cmd.player1.field, cmd.player1.matrix);
                         }
                         break;
                     }
 
                     if (cmd.winner === cmd.player1.name) {
-                        gameFinished(cmd.winner, cmd.player1.field, cmd.player1.matrix);
+                        gameFinished(cmd.player2.name, cmd.player1.field, cmd.player1.matrix);
                     } else {
-                        gameFinished(cmd.winner, cmd.player2.field, cmd.player2.matrix);
+                        gameFinished(cmd.player1.name, cmd.player2.field, cmd.player2.matrix);
                     }
                     break;
                 case 'CHAT_MESSAGE':
