@@ -50,12 +50,8 @@
 
     function login() {
         let username = document.getElementById("username").value;
+        let password = document.getElementById("password").value;
 
-        // Ну, тут надо было как-то пароль скрыть
-        // т.к. с кваркусовской авторизацией нет времени разбираться
-        // решаем ситуацию таким "оригинальным" (лол) образом
-
-        let password = 'пыщь_пыщь_ололо_я_водитель_нло';
         if (validate(username, password)) {
             const formData = new URLSearchParams();
             formData.append("j_username", username);
@@ -71,7 +67,7 @@
                 if (response.status === 200) {
                     window.location.replace("/lobby");
                 } else {
-                    register(username, password);
+                    printError('Похоже ты забыл логин или пароль...');
                 }
             }).catch((error) => {
                 printError('Небольшие технические чоколатки: ' + error);
@@ -230,6 +226,8 @@
     <div id="loginWrapper">
         <input type="text" placeholder="Логин" id="username" name="j_username" required>
     </div>
+    <div id="passwordWrapper">
+        <input type="password" placeholder="Пароль" id="password" name="j_password" required>
     <div id="btnWrapper">
         <button id="loginBtn" type="button" class="standardBtn" onclick="login()">Попутного ветра!</button>
     </div>

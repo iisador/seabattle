@@ -36,7 +36,7 @@ public class HelloResource {
         if (userService.hasUser(newUser.username())) {
             return "contains";
         } else {
-            userService.newUser(newUser.username(), newUser.password());
+            userService.createUser(newUser.username(), newUser.password());
             return "created";
         }
     }

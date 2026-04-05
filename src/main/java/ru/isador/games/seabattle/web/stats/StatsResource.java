@@ -18,7 +18,7 @@ public class StatsResource {
     }
 
     @GET
-    @RolesAllowed("user")
+    @RolesAllowed({"user", "admin"})
     public TemplateInstance stats() {
         return stats.instance();
     }

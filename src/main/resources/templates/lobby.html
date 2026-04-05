@@ -343,6 +343,35 @@
         {!</div>!}
     </div>
     <div id="logoCr">
+        {#if isAdmin}
+            <script>
+                function createUser() {
+                    const username = document.getElementById('username').value;
+                    const password = document.getElementById('password').value;
+
+                    fetch("/users", {
+                        method: "POST",
+                        body: JSON.stringify({
+                            username: username,
+                            password: password
+                        }),
+                        headers: {
+                            "Content-Type": "application/json",
+                        },
+                    }).then(async (response) => {
+                        if (response.status === 201) {
+                            alert('Пользователь создан');
+                            hideHelp('createUserModal');
+                        } else {
+                            alert("Ошибка создания пользователя: " + response.body);
+                        }
+                    }).catch((error) => {
+                        alert("Ошибка: " + error);
+                    });
+                }
+            </script>
+            <button class="standardBtn" onclick="showHelp('createUserModal')">Создать пользователя</button>
+        {/if}
         <form action="/logout" method="post">
             <button type="submit" class="standardBtn">Выйти</button>
         </form>
@@ -438,6 +467,21 @@
             <button id="toLobby" class="standardBtn" onclick="hideHelp('helpModal')">скрыть справку</button>
         </div>
     </div>
+    {#if isAdmin}
+        <div id="createUserModal" class="modal-window">
+            <div id="createUser">
+                <span class="bigTitle">Создать пользователя</span>
+                <div>
+                    <label for="username">Логин:</label>
+                    <input type="text" id="username" name="username">
+                    <label for="password">Пароль:</label>
+                    <input type="password" id="password" name="password">
+                </div>
+                <button class="standardBtn" onclick="createUser()">Создать</button>
+                <button class="standardBtn" onclick="hideHelp('createUserModal')">Отмена</button>
+            </div>
+        </div>
+    {/if}
     <div id="gameTypeHelpModal" class="modal-window"
          style="line-height: normal;font-size: 14px;position: relative;width: 500px; height: 250px;top: -700px;left: -550px;display: none">
         <button id="toLobby" class="standardBtn" onclick="hideHelp('gameTypeHelpModal')">скрыть</button>

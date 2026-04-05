@@ -29,7 +29,7 @@ import ru.isador.games.seabattle.services.game.GameService;
 import ru.isador.games.seabattle.services.game.NewGameException;
 
 @Path("/games")
-@RolesAllowed("user")
+@RolesAllowed({"user", "admin"})
 public class GameResource {
 
     private final GameService gameService;

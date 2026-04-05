@@ -33,11 +33,12 @@ public class LobbyResource {
     @GET
     @Blocking
     @Produces("text/html")
-    @RolesAllowed("user")
+    @RolesAllowed({"user", "admin"})
     public Object lobby(@Context SecurityContext securityContext) {
         if (securityContext.getUserPrincipal() != null) {
             List<Config> configs = gameConfigRepository.listPredefined();
             return lobby.data("playerName", securityContext.getUserPrincipal().getName())
+                        .data("isAdmin", securityContext.isUserInRole("admin"))
                         .data("gameConfigList", convert(configs));
         }
 

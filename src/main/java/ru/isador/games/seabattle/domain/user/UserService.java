@@ -16,10 +16,9 @@ public class UserService {
     }
 
     @Transactional
-    public User newUser(String username, String password) {
+    public void createUser(String username, String password) {
         User u = new User(username, BcryptUtil.bcryptHash(password), "user");
         userRepository.persist(u);
-        return u;
     }
 
     @Transactional
