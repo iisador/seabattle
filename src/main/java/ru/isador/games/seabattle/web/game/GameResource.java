@@ -70,13 +70,13 @@ public class GameResource {
     @Path("/{id}")
     public Object getGame(@Context SecurityContext securityContext, @PathParam("id") UUID id, @QueryParam("field") String field) {
         Game g = gameService.getGame(id);
-        if (field != null) {
-            try {
-                fleetValidator.validate(g.getConfig(), field);
-            } catch (FleetValidationException | JsonProcessingException e) {
-                return Response.status(Response.Status.BAD_REQUEST).build();
-            }
-        }
+//        if (field != null) {
+//            try {
+//                fleetValidator.validate(g.getConfig(), field);
+//            } catch (FleetValidationException | JsonProcessingException e) {
+//                return Response.status(Response.Status.BAD_REQUEST).build();
+//            }
+//        }
 
         if (g.getStatus().equals(GameStatus.FAILED) || g.getStatus().equals(GameStatus.FINISHED)) {
             return Response.seeOther(UriBuilder.fromPath("/lobby").build()).build();
