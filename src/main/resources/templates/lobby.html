@@ -25,17 +25,21 @@
     let playerMatrix;
     let playerField;
 
-    function addRowToTable(tableId, top, gameId, createTime, players, gameStatus) {
+    function addRowToTable(tableId, top, gameId, createTime, gameType, players, gameStatus) {
         const tbodyRef = document.getElementById(tableId).getElementsByTagName('tbody')[0];
         const newRow = tbodyRef.insertRow(top ? 0 : -1);
         newRow.id = gameId;
-        fillRow(newRow, gameId, createTime, players, gameStatus);
+        fillRow(newRow, gameId, createTime, gameType, players, gameStatus);
     }
 
-    function fillRow(row, gameId, createTime, players, gameStatus) {
+    function fillRow(row, gameId, createTime, gameType, players, gameStatus) {
         const timeCell = row.insertCell();
         timeCell.appendChild(document.createTextNode(createTime));
         row.appendChild(timeCell);
+
+        const typeCell = row.insertCell();
+        typeCell.appendChild(document.createTextNode(gameType));
+        row.appendChild(typeCell);
 
         const playersCell = row.insertCell();
         playersCell.appendChild(document.createTextNode(players));
@@ -64,12 +68,12 @@
         }
     }
 
-    function modifyRow(gameId, createTime, players, gameStatus) {
+    function modifyRow(gameId, createTime, gameType, players, gameStatus) {
         const row = document.getElementById(gameId);
         while (row.firstChild) {
             row.removeChild(row.lastChild);
         }
-        fillRow(row, gameId, createTime, players, gameStatus);
+        fillRow(row, gameId, createTime, gameType, players, gameStatus);
     }
 
     function removeRow(gameId) {
@@ -154,6 +158,19 @@
     // Прям как оценки требований делаем кароче.
     function randomFill() {
         resetGame();
+
+        if (document.getElementById('gameConf').value === '60d86085-2200-47d7-a2a7-eba88cbdd237') {
+            const direction = random(2) ? 'horizontal' : 'vertical';
+            const x = random(playerMatrix.getSize());
+            const y = random(playerMatrix.getSize());
+            if (playerMatrix.canPlaceShip(1, x, y, direction)) {
+                playerMatrix.placeShip(1, x, y, direction);
+                playerField.drawShip(1, x, y, direction);
+            }
+
+            return;
+        }
+
         const sortedDeckCount = Array.from(playerMatrix.getShipConfig().keys()).sort().reverse();
 
         let resetCount = 1989;
@@ -276,23 +293,23 @@
                 // Я буду устанавливать сейчас все игры!
                 for (let i = 0; i < cmd.length; i++) {
                     if (cmd[i].status === 'PLAYING') {
-                        modifyRow(cmd[i].id, cmd[i].createTime, cmd[i].players, cmd[i].status);
+                        modifyRow(cmd[i].id, cmd[i].createTime, cmd[i].configName, cmd[i].players, cmd[i].status);
                     }
                     if (cmd[i].status === 'WAITING') {
-                        addRowToTable('gamesTable', true, cmd[i].id, cmd[i].createTime, cmd[i].players, cmd[i].status)
+                        addRowToTable('gamesTable', true, cmd[i].id, cmd[i].createTime, cmd[i].configName, cmd[i].players, cmd[i].status)
                     }
                 }
             }
 
             if (cmd.type === 'GAME_CHANGED') {
                 if (cmd.status === 'PLAYING') {
-                    modifyRow(cmd.id, cmd.createTime, cmd.players, cmd.status);
+                    modifyRow(cmd.id, cmd.createTime, cmd.configName, cmd.players, cmd.status);
                 }
                 if (cmd.status === 'FINISHED' || cmd.status === 'FAILED') {
                     removeRow(cmd.id);
                 }
                 if (cmd.status === 'WAITING') {
-                    addRowToTable('gamesTable', true, cmd.id, cmd.createTime, cmd.players, cmd.status)
+                    addRowToTable('gamesTable', true, cmd.id, cmd.createTime, cmd.configName, cmd.players, cmd.status)
                 }
             }
         };
@@ -368,6 +385,7 @@
                     <thead>
                     <tr>
                         <th>Создана</th>
+                        <th>Тип</th>
                         <th>Игроки</th>
                         <th>Посмотреть</th>
                         <th>Присоединиться</th>

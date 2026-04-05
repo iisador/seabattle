@@ -13,30 +13,30 @@ public class ResponseGameChanged extends Response {
 
     public ResponseGameChanged(LocalDateTime createTime, String players, String configName, String status, String id) {
         super(ResponseType.GAME_CHANGED);
-        this.createTime = createTime.format(DateTimeFormatter.ofPattern("dd/MM/yyy HH:mm:ss"));;
+        this.createTime = createTime.format(DateTimeFormatter.ofPattern("dd/MM/yyy HH:mm:ss"));
         this.players = players;
         this.configName = configName;
         this.status = status;
         this.id = id;
     }
 
+    public String getConfigName() {
+        return configName;
+    }
+
     public String getCreateTime() {
         return createTime;
+    }
+
+    public String getId() {
+        return id;
     }
 
     public String getPlayers() {
         return players;
     }
 
-    public String getConfigName() {
-        return configName;
-    }
-
     public String getStatus() {
         return status;
-    }
-
-    public String getId() {
-        return id;
     }
 }

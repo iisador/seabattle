@@ -42,7 +42,7 @@ public class GameService {
     public Game newGame(String playerName, String field, UUID configId) throws NewGameException, FleetValidationException, JsonProcessingException {
         Config predefinedConfig = gameConfigRepository.findById(configId)
                                                       .orElseThrow(() -> new NewGameException(configId));
-        fleetValidator.validate(predefinedConfig, field);
+//        fleetValidator.validate(predefinedConfig, field);
         Config config;
 
         config = newConfig(predefinedConfig);
@@ -56,7 +56,7 @@ public class GameService {
 
     private Config newConfig(Config predefinedConfig) {
         Config config = new Config();
-        config.setName("Кастом");
+        config.setName(predefinedConfig.getName());
         gameConfigRepository.persist(config);
 
         predefinedConfig.getParameters().forEach(p -> config.addParameter(p.getId().getName(), p.getValue()));
