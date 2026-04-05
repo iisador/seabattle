@@ -1,6 +1,8 @@
 package ru.isador.games.seabattle.web;
 
+import io.vertx.core.http.HttpServerRequest;
 import jakarta.ws.rs.GET;
+import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.Response;
@@ -16,6 +18,13 @@ public class IndexResource {
             return Response.seeOther(UriBuilder.fromUri("/lobby").build()).build();
         }
 
+        return Response.seeOther(UriBuilder.fromUri("/hello").build()).build();
+    }
+
+    @POST
+    @Path("/logout")
+    public Response logout(@Context HttpServerRequest request) {
+        request.response().removeCookie("quarkus-credential");
         return Response.seeOther(UriBuilder.fromUri("/hello").build()).build();
     }
 }

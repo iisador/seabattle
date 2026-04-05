@@ -3,11 +3,11 @@ package ru.isador.games.seabattle.web.lobby;
 import java.util.List;
 
 import io.quarkus.qute.Template;
-import io.quarkus.qute.TemplateInstance;
 import io.smallrye.common.annotation.Blocking;
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.GET;
+import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.Context;
@@ -16,6 +16,7 @@ import jakarta.ws.rs.core.SecurityContext;
 import jakarta.ws.rs.core.UriBuilder;
 import ru.isador.games.seabattle.domain.config.Config;
 import ru.isador.games.seabattle.domain.config.GameConfigRepository;
+import io.vertx.core.http.HttpServerRequest;
 
 @Path("/lobby")
 public class LobbyResource {
@@ -40,6 +41,13 @@ public class LobbyResource {
                         .data("gameConfigList", convert(configs));
         }
 
+        return Response.seeOther(UriBuilder.fromUri("/hello").build()).build();
+    }
+
+    @POST
+    @Path("/logout")
+    public Response logout(@Context HttpServerRequest request) {
+        request.response().removeCookie("quarkus-credential");
         return Response.seeOther(UriBuilder.fromUri("/hello").build()).build();
     }
 
