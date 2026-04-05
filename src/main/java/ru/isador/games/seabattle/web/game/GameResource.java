@@ -7,6 +7,7 @@ import io.quarkus.qute.Template;
 import io.quarkus.qute.TemplateInstance;
 import io.smallrye.common.annotation.Blocking;
 import io.vertx.core.eventbus.EventBus;
+import jakarta.annotation.security.PermitAll;
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.GET;
@@ -89,8 +90,9 @@ public class GameResource {
 
     @GET
     @Path("/{id}/view")
+    @PermitAll
     public TemplateInstance viewGame(@Context SecurityContext securityContext, @PathParam("id") UUID id) {
-        return viewGame.data("viewerName", securityContext.getUserPrincipal().getName())
+        return viewGame.data("viewerName", securityContext.getUserPrincipal() != null ? securityContext.getUserPrincipal().getName() : "Anonymous")
                        .data("gameId", id);
     }
 
