@@ -75,29 +75,6 @@
         }
     }
 
-    function register(username, password) {
-        fetch("hello", {
-            method: "POST",
-            body: JSON.stringify({ username: username, password: password }),
-            headers: {
-                "Content-Type": "application/json",
-            },
-        }).then(async (response) => {
-            const t = await response.text();
-            if (response.status === 200) {
-                if (t === 'contains') {
-                    printError('Пользователь уже существует');
-                } else if (t === 'created') {
-                    login();
-                }
-            } else {
-                printError('Хмм... что-то пошло не так: ' + t);
-            }
-        }).catch((error) => {
-            printError('Хмм... что-то пошло не так: ' + error);
-        });
-    }
-
     function printError(str) {
         const eWrapper = document.getElementById('errorWrapper');
         if (eWrapper.children.length > 0) {
@@ -234,7 +211,7 @@
     </div>
     <div id="bottomWrapper">
         <span class="midTitle">Текущие игры</span>
-        <table id="gamesTable" style="width: 100%">
+        <table id="gamesTable">
             <thead>
             <tr>
                 <th>Создана</th>

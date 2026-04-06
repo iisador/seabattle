@@ -107,7 +107,7 @@ public class GameWebSocket {
                         playerSessions.put(session.getId(), p.getPlayerName());
                         gw.getGame().setStatus(GameStatus.PLAYING);
                         eventBus.publish("gameBus",
-                            new GamesGrid(gw.getGame().getId(), gw.getGame().getCreateTime(), gw.getGame().getStatus(), gw.getPlayersString()));
+                            new GamesGrid(gw.getGame().getId(), gw.getGame().getCreateTime(), gw.getGame().getStatus(), gw.getPlayersString(), gw.getGame().getConfig().getName()));
                         broadcastToGame(gameId, new ResponsePlayerJoined(pw.getPlayer().getPlayerName(), pw.getSquadron().getAliveShips()));
 
                         // Запускаем игру
@@ -217,7 +217,7 @@ public class GameWebSocket {
                         }
 
                         eventBus.publish("gameBus",
-                            new GamesGrid(gw.getGame().getId(), gw.getGame().getCreateTime(), gw.getGame().getStatus(), gw.getPlayersString()));
+                            new GamesGrid(gw.getGame().getId(), gw.getGame().getCreateTime(), gw.getGame().getStatus(), gw.getPlayersString(), gw.getGame().getConfig().getName()));
 
                         gw.setFinished(true);
                         gw.getGame().setStatus(GameStatus.FINISHED);
@@ -256,7 +256,7 @@ public class GameWebSocket {
                                                                         .toList();
                         broadcastToGame(gameId, new ResponseGameFinished(pw.getPlayer().getPlayerName(), gameId, players.get(0), players.get(1)));
                         eventBus.publish("gameBus",
-                            new GamesGrid(gw.getGame().getId(), gw.getGame().getCreateTime(), gw.getGame().getStatus(), gw.getPlayersString()));
+                            new GamesGrid(gw.getGame().getId(), gw.getGame().getCreateTime(), gw.getGame().getStatus(), gw.getPlayersString(), gw.getGame().getConfig().getName()));
                     }
                 }
             }
@@ -349,7 +349,7 @@ public class GameWebSocket {
                         gameService.finishGame(gameId, gw.getFirstPlayer().getPlayer().getPlayerName(), gw.getCommands());
                     }
                     eventBus.publish("gameBus",
-                        new GamesGrid(gw.getGame().getId(), gw.getGame().getCreateTime(), gw.getGame().getStatus(), gw.getPlayersString()));
+                        new GamesGrid(gw.getGame().getId(), gw.getGame().getCreateTime(), gw.getGame().getStatus(), gw.getPlayersString(), gw.getGame().getConfig().getName()));
                 }
             }
         }

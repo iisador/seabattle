@@ -41,11 +41,12 @@ public class GamesGrid extends PanacheEntityBase {
     public GamesGrid() {
     }
 
-    public GamesGrid(UUID id, LocalDateTime createTime, GameStatus status, String players) {
+    public GamesGrid(UUID id, LocalDateTime createTime, GameStatus status, String players, String configName) {
         this.id = id;
         this.createTime = createTime;
         this.status = status;
         this.players = players;
+        this.configName = configName;
     }
 
     public String getConfig() {
