@@ -26,22 +26,22 @@
 <script>
     function validate(username, password) {
         if (!username || /^\s*$/.test(username)) {
-            printError('Ну нормальное имя введи');
+            printError('Логин некорректный');
             return false;
         }
 
         if (username.length > 50) {
-            printError('Длинноватый логин. 50 символов обычно достаточно');
+            printError('Слишком длинный логин');
             return false;
         }
 
         if (!password || /^\s*$/.test(password)) {
-            printError('Ну пароль придумай человеческий');
+            printError('Некорректный логин');
             return false;
         }
 
         if (password.length > 150) {
-            printError('Ну и пароль. Зачем такой длинный-то?)) 150 символов хватит');
+            printError('Слишком длинный пароль');
             return false;
         }
 
@@ -67,10 +67,10 @@
                 if (response.status === 200) {
                     window.location.replace("/lobby");
                 } else {
-                    printError('Похоже ты забыл логин или пароль...');
+                    printError('Ошибка в логине или пароле');
                 }
             }).catch((error) => {
-                printError('Небольшие технические чоколатки: ' + error);
+                printError('Хмм... что-то пошло не так: ' + error);
             });
         }
     }
@@ -91,10 +91,10 @@
                     login();
                 }
             } else {
-                printError('Небольшие технические чоколатки: ' + t);
+                printError('Хмм... что-то пошло не так: ' + t);
             }
         }).catch((error) => {
-            printError('Небольшие технические чоколатки: ' + error);
+            printError('Хмм... что-то пошло не так: ' + error);
         });
     }
 
@@ -228,6 +228,7 @@
     </div>
     <div id="passwordWrapper">
         <input type="password" placeholder="Пароль" id="password" name="j_password" required>
+    </div>
     <div id="btnWrapper">
         <button id="loginBtn" type="button" class="standardBtn" onclick="login()">Попутного ветра!</button>
     </div>

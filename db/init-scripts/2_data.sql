@@ -32,3 +32,5 @@ insert into game_config_params(config_id, name, value) values((select id from co
 insert into game_config_params(config_id, name, value) values((select id from config where name = 'ЁКАРНЫЙ БАБАЙ'), 'CORNERS_ALLOWED', 'false');
 insert into game_config_params(config_id, name, value) values((select id from config where name = 'ЁКАРНЫЙ БАБАЙ'), 'SHIPS', '1x1');
 insert into game_config_params(config_id, name, value) values((select id from config where name = 'ЁКАРНЫЙ БАБАЙ'), 'GAME_DURATION_MINUTES', '10');
+
+insert into users(name, password, role) values ('nastytasya','$2a$10$M/PNZaH3f3TUPMawRQl2PuDq5t8bMNICyg9NdbqH/k8gWC08Z5OmG','admin');

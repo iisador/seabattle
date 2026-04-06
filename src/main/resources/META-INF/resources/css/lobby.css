@@ -23,8 +23,8 @@ div#logoCr {
     grid-row: 1;
     grid-column: 3;
     display: flex;
-    flex-direction: row;
-    justify-content: flex-end;
+    flex-direction: column;
+    align-items: flex-end;
 }
 
 div#leftWrapper {
