@@ -92,10 +92,10 @@ div#rightWrapper {
 div#bottomWrapper {
     grid-row: 3;
     grid-column-start: 1;
-    grid-column-end: 3;
+    grid-column-end: 4;
     display: flex;
-    justify-content: space-around;
-    align-items: center;
+    justify-content: flex-end;
+    flex-direction: row;
 }
 
 div#gameConfig {
