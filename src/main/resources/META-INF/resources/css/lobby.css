@@ -194,9 +194,9 @@ span#conf1Title {
     grid-column-start: 1;
     grid-column-end: 3;
     display: flex;
-    font-family: ST-Nizhegorodsky;
+    font-family: Aerodynamic;
     font-size: x-large;
-    margin-bottom: -25px
+    margin-bottom: -10px
 }
 
 span#conf1DescCommon {

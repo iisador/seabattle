@@ -1,0 +1,7 @@
+This Font is a Derivative of the Apache Licensed open source font, Roboto.
+
+Change Log:
+
+New Name "Aerodynamic", new Quotation Mark and Apostrophe designs, Modified Dollar Sign, tweaked Ampersand, tweaked number 4, new number 1, added Triple Prime Mark, added Interrobang character, added Russian Ruble Mark, added Telephone sign, added basic Roman Numerals, tweaked font into a Humanist style.
+
+Additions and changed characters contributed by Cannot Into Space Fonts.

@@ -1,5 +1,5 @@
 body {
-    font: normal 18px RobotoSlab;
+    font: normal 18px Aerodynamic;
     line-height: 31px;
     color: #264a92;
     background: url('/img/wave.svg');
@@ -9,7 +9,7 @@ body {
     background-color: #e9edf4;
     border: 2px solid #264a92;
     border-radius: 5px;
-    font-family: ST-Nizhegorodsky;
+    font-family: Renju;
     font-size: larger;
 }
 
@@ -20,12 +20,12 @@ body {
 }
 
 .bigTitle {
-    font-family: ST-Nizhegorodsky;
+    font-family: Renju;
     font-size: xxx-large;
 }
 
 .bigTitleBlink {
-    font-family: ST-Nizhegorodsky;
+    font-family: Renju;
     font-size: xxx-large;
     animation: blinker 1s linear infinite;
 }
@@ -37,7 +37,7 @@ body {
 }
 
 .midTitle {
-    font-family: ST-Nizhegorodsky;
+    font-family: Renju;
     font-size: xx-large;
 }
 
