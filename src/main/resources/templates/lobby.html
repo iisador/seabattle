@@ -338,8 +338,10 @@
 <body>
 <div id="lobbyWrapper">
     <div id="headerWrapper">
+        <img src="/img/octopussy.png" style="width: 218px; height: 254px">
     </div>
     <div id="logoCr">
+        <img src="/img/anchor.png">
         {#if isAdmin}
             <script>
                 function createUser() {
@@ -377,11 +379,11 @@
     <div id="centerWrapper">
         <div id="gameWrapper">
             <div id="title">
-                <span class="bigTitle">Семь футов под килем, {playerName}</span>
+                <span class="bigTitle">Семь футов под килем, <span class="orange">{playerName}</span></span>
             </div>
             <div id="newGameWrapper">
                 <div id="gameConfig">
-                    <div id="gameConfigTitle"><span class="midTitle">Начать новую игру</span></div>
+                    <div id="gameConfigTitle"><span class="midTitle"><span class="orange">Н</span>ачать новую игру</span></div>
                     <div id="gameTypeLabel"><label for="gameConf">Место битвы</label></div>
                     <div id="gameTypeConf"><select id="gameConf" name="conf" onchange="resetGame()">
                             {#each gameConfigList}
@@ -408,7 +410,7 @@
                 </div>
             </div>
             <div id="waitingGamesWrapper">
-                <span class="midTitle">Текущие игры</span>
+                <span class="midTitle"><span class="orange">Т</span>екущие игры</span>
                 <table id="gamesTable" style="width: 100%">
                     <thead>
                     <tr>
@@ -424,16 +426,22 @@
                 </table>
             </div>
             <span style="font-size: medium;">Если не знакомы с правилами игры, почитайте <span
-                        style="font-style: italic;text-decoration: underline; cursor: pointer" onclick="showHelp('helpModal')">справку.</span></span>
+                        style="font-style: italic;text-decoration: underline; cursor: pointer" onclick="showHelp('helpModal')"><span class="orange">справку</span>.</span></span>
         </div>
     </div>
     <div id="rightWrapper"></div>
     <div id="bottomWrapper">
+        <img src="/img/lighthouse.png">
+        <img src="/img/wave1.png" style="width: 76px; height: 32px">
+        <img src="/img/wave2.png" style="width: 141px; height: 46px">
+        <img src="/img/ship.png">
+        <img src="/img/wave2.png" style="width: 141px; height: 46px">
+        <img src="/img/wave1.png" style="width: 76px; height: 32px">
         <img src="/img/shark.png">
     </div>
     <div id="helpModal" class="modal-window">
         <div id="help">
-            <span class="bigTitle">Правила игры</span>
+            <span class="bigTitle"><span class="orange">П</span>равила игры</span>
             <div>
                 <ol>
                     <li>Выбираем предустановленные настройки:</li>

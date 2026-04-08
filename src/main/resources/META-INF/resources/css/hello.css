@@ -1,6 +1,6 @@
 div#helloWrapper {
     display: grid;
-    grid-template-rows: 1fr auto auto auto auto auto auto;
+    grid-template-rows: 1fr auto auto auto auto auto auto auto;
     grid-template-columns: auto;
     gap: 10px;
 }
@@ -9,7 +9,7 @@ div#headerWrapper {
     grid-row: 1;
     grid-column: 1;
     display: flex;
-    justify-content: space-around;
+    flex-direction: column;
     align-items: center;
 }
 
@@ -61,4 +61,13 @@ div#bottomWrapper {
     flex-direction: column;
     justify-content: space-around;
     align-items: center;
+}
+
+div#bottomBottomWrapper {
+    grid-row: 8;
+    grid-column: 1;
+    display: flex;
+    justify-content: space-between;
+    flex-direction: row;
+    align-items: flex-end;
 }

@@ -149,11 +149,11 @@
     <div id="centerWrapper">
         <div id="gameWrapper">
             <div id="title">
-                <span class="bigTitle">Присоединение к игре с {opponentName}</span>
+                <span class="bigTitle">Присоединение к игре с <span class="orange">{opponentName}</span></span>
             </div>
             <div id="newGameWrapper">
                 <div id="gameConfig">
-                    <div id="gameConfigTitle"><span class="midTitle">Расположи свой флот</span></div>
+                    <div id="gameConfigTitle"><span class="midTitle"><span class="orange">Р</span>асположи свой флот</span></div>
                     <input type="hidden" id="bordersAllowed" name="bordersAllowed" {#if BORDERS_ALLOWED}checked {/if}disabled>
                     <input type="hidden" id="cornersAllowed" name="cornersAllowed" {#if CORNERS_ALLOWED}checked {/if}disabled>
                     <input type="hidden" id="fieldSize" name="fieldSize" value="{FIELD_SIZE}" disabled>
@@ -174,7 +174,15 @@
         </div>
     </div>
     <div id="rightWrapper"></div>
-    <div id="bottomWrapper"></div>
+    <div id="bottomWrapper">
+        <img src="/img/lighthouse.png">
+        <img src="/img/wave1.png" style="width: 76px; height: 32px">
+        <img src="/img/wave2.png" style="width: 141px; height: 46px">
+        <img src="/img/ship.png">
+        <img src="/img/wave2.png" style="width: 141px; height: 46px">
+        <img src="/img/wave1.png" style="width: 76px; height: 32px">
+        <img src="/img/shark.png">
+    </div>
 </div>
 </body>
 </html>

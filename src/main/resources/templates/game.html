@@ -88,20 +88,20 @@
 
     function updateTitle(str) {
         const titleSpan = document.getElementById('titleSpan');
-        titleSpan.innerText = str;
+        titleSpan.innerHTML = str;
     }
 
     function gameStarted(turn, player1, player2) {
         chatMessage('', 'Ход за ' + turn + '\n');
         chatMessage('', 'Игра началась!');
         currentTurn = turn;
-        setTurn('Ход: ' + currentTurn);
+        setTurn('Ход:  <span class="orange">' + currentTurn + '</span>');
         if (whoami() === player1) {
             document.getElementById('enemyTitleSpan').innerText = player2;
-            updateTitle('БИТВА ' + whoami() + ' vs ' + player2);
+            updateTitle('БИТВА ' + whoami() + ' <span class="orange">vs</span> ' + player2);
         } else {
             document.getElementById('enemyTitleSpan').innerText = player1;
-            updateTitle('БИТВА ' + whoami() + ' vs ' + player1);
+            updateTitle('БИТВА ' + whoami() + ' <span class="orange">vs</span> ' + player1);
         }
 
         document.addEventListener('mousedown', clickListener);
@@ -128,8 +128,8 @@
                 setTurn('Поздравляем с победой!', 'КР<span class="midTitle">А</span>БР отправляется в ' + winner + '!', 'xxx-large');
                 sounds.playRandomFinish();
             } else {
-                chatMessage('', 'Победил(а) ' + winner + '! Поздравляем!');
-                setTurn('Победил(а) ' + winner + '! Поздравляем! Попытаете счастья еще раз?', '', 'xxx-large');
+                chatMessage('', 'Победил(а) <span class="orange">' + winner + '</spen>! Поздравляем!');
+                setTurn('Победил(а) <span class="orange">' + winner + '</span>! Поздравляем! Попытаете счастья еще раз?', '', 'xxx-large');
                 sounds.playRandomFail();
             }
         }
@@ -377,7 +377,7 @@
     <div id="centerWrapper">
         <div id="gameWrapper">
             <div id="title">
-                <span id="titleSpan" class="bigTitle">Ожидание игрока</span>
+                <span id="titleSpan" class="bigTitle"><span class="orange">О</span>жидание игрока</span>
                 <span id="titleSpanAdditional" class="bigTitle"></span>
             </div>
             <div id="turn">
@@ -390,7 +390,7 @@
 
             <div id="timer">
                 <span class="midTitle">До конца игры:</span>
-                <span id="countdown" class="bigTitle">00:00</span>
+                <span id="countdown" class="bigTitle orange"><span class="orange">00:00</span></span>
             </div>
             <div id="enemyFieldTitle">
                 <span id="enemyTitleSpan" class="midTitle"></span>
@@ -425,7 +425,15 @@
         </div>
     </div>
     <div id="rightWrapper"></div>
-    <div id="bottomWrapper"></div>
+    <div id="bottomWrapper">
+        <img src="/img/lighthouse.png">
+        <img src="/img/wave1.png" style="width: 76px; height: 32px">
+        <img src="/img/wave2.png" style="width: 141px; height: 46px">
+        <img src="/img/ship.png">
+        <img src="/img/wave2.png" style="width: 141px; height: 46px">
+        <img src="/img/wave1.png" style="width: 76px; height: 32px">
+        <img src="/img/shark.png">
+    </div>
 </div>
 
 <div id="errModal" class="modal-window" style="position: relative">
