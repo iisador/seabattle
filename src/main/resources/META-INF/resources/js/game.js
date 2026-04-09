@@ -79,6 +79,99 @@ class Matrix {
     }
 
     canPlaceShip(deckCount, x, y, direction) {
+        if (!this.#shipConfig.get(deckCount)) {
+            return false;
+        }
+
+        if (this.#ships.get(deckCount) >= this.#shipConfig.get(deckCount)) {
+            return false;
+        }
+
+        // Проверка выхода за границы
+        if (!this.pointInMatrix(x, y)) {
+            return false;
+        }
+        if ((direction === 'vertical') && !this.pointInMatrix(x + deckCount - 1, y)) {
+            return false;
+        }
+
+        if ((direction === 'horizontal') && !this.pointInMatrix(x, y + deckCount - 1)) {
+            return false;
+        }
+
+        // Проверка коллизий границ
+        if (!this.#config.borderCollisionAllowed()) {
+            if (x === 0
+                || y === 0
+                || x === (this.#size - 1)
+                || y === (this.#size - 1)
+                || ((direction === 'vertical') && (x + deckCount) === this.#size)
+                || ((direction === 'horizontal') && (y + deckCount) === this.#size)) {
+                return false;
+            }
+        }
+
+        // Проверка коллизий углов
+        if (!this.#config.cornerCollisionAllowed()) {
+            if (this.hasCornerCollision(x, y)) {
+                return false
+            }
+
+            if (direction === 'vertical') {
+                if (this.hasCornerCollision(x + deckCount - 1, y)) {
+                    return false;
+                }
+            }
+
+            if (direction === 'horizontal') {
+                if (this.hasCornerCollision(x, y + deckCount - 1)) {
+                    return false;
+                }
+            }
+        }
+
+        // Проверка коллизий по вертикали и горизонтали
+        for (let deckIndex = 0; deckIndex < deckCount; deckIndex++) {
+            if (direction === 'vertical') {
+                if (this.#matrix[x + deckIndex][y] !== 0) {
+                    return false;
+                }
+
+                if ((deckIndex === 0) && this.hasTopCollision(x + deckIndex, y)) {
+                    return false;
+                }
+
+                // Корабли не должны касаться друг друга по бокам
+                if (this.hasLeftRightCollisions(x + deckIndex, y)) {
+                    return false;
+                }
+
+                if ((deckIndex === deckCount - 1) && this.hasBottomCollision(x + deckIndex, y)) {
+                    return false;
+                }
+            }
+            if (direction === 'horizontal') {
+                if (this.#matrix[x][y + deckIndex] !== 0) {
+                    return false;
+                }
+
+                if ((deckIndex === 0) && this.hasLeftCollision(x, y + deckIndex)) {
+                    return false;
+                }
+                // Корабли не должны касаться друг друга сверху и снизу
+                if (this.hasTopBottomCollisions(x, y + deckIndex)) {
+                    return false;
+                }
+
+                if ((deckIndex === deckCount - 1) && this.hasRightCollision(x, y + deckIndex)) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    fakeCanPlaceShip(deckCount, x, y, direction) {
         // Проверка выхода за границы
         if (!this.pointInMatrix(x, y)) {
             return false;
