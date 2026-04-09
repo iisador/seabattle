@@ -94,6 +94,7 @@
     function gameStarted(turn, player1, player2) {
         chatMessage('', 'Ход за ' + turn + '\n');
         chatMessage('', 'Игра началась!');
+        sounds.playRandomStart();
         currentTurn = turn;
         setTurn('Ход:  <span class="orange">' + currentTurn + '</span>');
         if (whoami() === player1) {
@@ -128,7 +129,7 @@
                 setTurn('Поздравляем с победой!', 'КР<span class="midTitle">А</span>БР отправляется в ' + winner + '!', 'xxx-large');
                 sounds.playRandomFinish();
             } else {
-                chatMessage('', 'Победил(а) <span class="orange">' + winner + '</spen>! Поздравляем!');
+                chatMessage('', 'Победил(а) ' + winner + '! Поздравляем!');
                 setTurn('Победил(а) <span class="orange">' + winner + '</span>! Поздравляем! Попытаете счастья еще раз?', '', 'xxx-large');
                 sounds.playRandomFail();
             }
@@ -221,6 +222,8 @@
                 timer = 0;
                 clearInterval(intervalId);
                 sounds.playItsGettingBoring();
+                // Чтобы игра закончилась делаем выстрел. Таймер все равно вышел, остальное сделает алгоритм%)
+                sendCommand('FIRE', { x: 0, y: 0, playerName: whoami() });
             }
         }, 1000);
     }

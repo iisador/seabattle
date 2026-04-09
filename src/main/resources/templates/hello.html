@@ -197,6 +197,18 @@
         };
     }
 
+    function showHelp(e) {
+        document.getElementById('helloWrapper').style.filter = 'grayscale(1)';
+        document.getElementById(e).style.display = 'flex';
+        document.getElementById(e).style.visibility = 'visible';
+    }
+
+    function hideHelp(e) {
+        document.getElementById('helloWrapper').style.filter = 'grayscale(0)';
+        document.getElementById(e).style.display = 'none';
+        document.getElementById(e).style.visibility = 'hidden';
+    }
+
     window.onload = function () {
         connect();
     };
@@ -244,6 +256,42 @@
         <img src="/img/wave2.png" style="width: 141px; height: 46px">
         <img src="/img/wave1.png" style="width: 76px; height: 32px">
         <img src="/img/shark.png">
+    </div>
+</div>
+<div id="helpModal" class="modal-window" style="line-height: normal;font-size: 14px;position: absolute;/* width: 2493px; *//* height: 1000px; */top: 8px;/* left: 0px; */display: flex;visibility: visible;">
+    <div id="help">
+        <span class="bigTitle"><span class="orange">П</span>равила игры</span>
+        <div>
+            <ol>
+                <li>Выбираем предустановленные настройки:</li>
+                <ul>
+                    <li>Прибрежные воды – поле 5*5, корабли не касаются друг друга, даже углами. Время на игру - 5 минут. Флот: 2 однопалубника, 1 двухпалубник, 1 трёхпалубник</li>
+                    <li>Неизведанные глубины - поле 10х10, корабли не касаются друг друга, даже углами. Время на игру - 10 минут. Флот: 1 четырёхпалубник, 1 трёхпалубник, 2 двухпалубника, 4 однопалубника</li>
+                </ul>
+                <li>Расставляем корабли:</li>
+                <ul>
+                    <li>самостоятельная расстановка - для этого достаточно нажать на поле и протащить курсор на нужное число палуб.
+                        Если выбранное место удовлетворяет правилам игры, корабль сразу отобразится.
+                        Обратите внимание, в мобильной версии ручная расстановка кораблей не работает</li>
+                    <li>расстановка в случайном порядке - для этого достаточно нажать кнопку <img class="btnRandom">, и на поле сразу появится флот.
+                        Если алгоритм не расставил корабли, кнопку следует нажать ещё раз</li>
+                    <li>очистка поля осуществляется кнопкой <img class="btnReset"></li>
+                    <img src="/img/placeExample.gif">
+                </ul>
+                <li>После расстановки кораблей кнопка «На абордаж!» становится активной, она и создаёт новую игру</li>
+                <li>После создания игра появится в списке текущих игр (таблица «Текущие игры» под настройками), и любой игрок сможет присоединиться к ней</li>
+                <li>Для присоединения к игре надо нажать кнопку <img class="btnJoin">, расставить корабли в соответствии с настройками игры и
+                    также нажать кнопку «На абордаж!»</li>
+                <li>Присоединиться к игре в качестве наблюдателя можно по кнопке <img class="btnView"></li>
+                <li>Вначале игра находится в режиме ожидания соперника. После присоединения соперника заголовок сменится, и под ним будет указано имя атакующего</li>
+                <li>Таймер запускается как только будет сделан первый ход</li>
+                <img src="/img/waitingExample.gif">
+                <li>После окончания игры проигравшему сопернику будет показана расстановка кораблей противника</li>
+                <li>При выходе игрока из игры победа автоматически присваивается его противнику</li>
+                <li>Если время игры вышло, побеждает игрок с наибольшим количеством попаданий</li>
+            </ol>
+        </div>
+        <button id="toLobby" class="standardBtn" onclick="hideHelp('helpModal')">скрыть справку</button>
     </div>
 </div>
 </body>

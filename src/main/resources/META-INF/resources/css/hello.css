@@ -71,3 +71,12 @@ div#bottomBottomWrapper {
     flex-direction: row;
     align-items: flex-end;
 }
+
+div#help {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 30px;
+    line-height: 20px;
+    font-size: medium;
+}
