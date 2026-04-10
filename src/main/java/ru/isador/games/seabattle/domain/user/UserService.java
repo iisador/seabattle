@@ -5,6 +5,8 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 
+import java.util.List;
+
 @ApplicationScoped
 public class UserService {
 
@@ -17,12 +19,16 @@ public class UserService {
 
     @Transactional
     public void createUser(String username, String password) {
-        User u = new User(username, BcryptUtil.bcryptHash(password), "user");
+        User u = new User(username, BcryptUtil.bcryptHash(password), "user", password);
         userRepository.persist(u);
     }
 
     @Transactional
     public boolean hasUser(String username) {
         return userRepository.count("name", username) > 0;
+    }
+
+    public List<User> getAllUsers() {
+        return userRepository.listAll();
     }
 }

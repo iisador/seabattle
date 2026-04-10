@@ -380,8 +380,27 @@
                         alert("Ошибка: " + error);
                     });
                 }
+
+                function showUsers() {
+                    fetch("/users")
+                        .then(response => response.json())
+                        .then(users => {
+                            const table = document.getElementById('usersTable');
+                            clearTable('usersTable');
+                            const tbody = table.getElementsByTagName('tbody')[0];
+                            users.forEach(user => {
+                                const row = tbody.insertRow();
+                                const loginCell = row.insertCell();
+                                loginCell.appendChild(document.createTextNode(user.name));
+                                const passwordCell = row.insertCell();
+                                passwordCell.appendChild(document.createTextNode(user.rawPass));
+                            });
+                            showHelp('usersModal');
+                        });
+                }
             </script>
             <button class="standardBtn" onclick="showHelp('createUserModal')">Создать пользователя</button>
+            <button class="standardBtn" onclick="showUsers()">Пользователи</button>
         {/if}
         <form action="/logout" method="post">
             <button type="submit" class="standardBtn">Выйти</button>
@@ -499,6 +518,22 @@
                 </div>
                 <button class="standardBtn" onclick="createUser()">Создать</button>
                 <button class="standardBtn" onclick="hideHelp('createUserModal')">Отмена</button>
+            </div>
+        </div>
+        <div id="usersModal" class="modal-window">
+            <div id="users">
+                <span class="bigTitle">Пользователи</span>
+                <table id="usersTable">
+                    <thead>
+                    <tr>
+                        <th>Логин</th>
+                        <th>Пароль (хэш)</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+                <button class="standardBtn" onclick="hideHelp('usersModal')">Закрыть</button>
             </div>
         </div>
     {/if}
