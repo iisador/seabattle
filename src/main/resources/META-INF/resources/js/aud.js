@@ -34,6 +34,7 @@ class Sounds {
         this.#custom.push(new Audio("/audio/i_vote_to_kill.mp3"));
         this.#custom.push(new Audio("/audio/i_don't_understand_sir.mp3"));
         this.#custom.push(new Audio("/audio/i_don't_like_anything_at_all.mp3"));
+        this.#custom.push(new Audio("/audio/regatta_participants.mp3"));
     }
 
     playRandom(arr) {
@@ -93,6 +94,10 @@ class Sounds {
 
     playIDontLikeAnythingAtAll() {
         this.playRandom([this.#custom[6]]);
+    }
+
+    playRegattaParticipants() {
+        this.playRandom([this.#custom[7]]);
     }
 
     playRandomStart() {

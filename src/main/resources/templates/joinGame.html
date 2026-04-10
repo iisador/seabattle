@@ -10,11 +10,13 @@
     <script src="/js/common.js"></script>
     <script src="/js/field.js"></script>
     <script src="/js/game.js"></script>
+    <script src="/js/aud.js"></script>
 
     <title>{msg:game_title}</title>
 </head>
 <body>
 <script>
+    const sounds = new Sounds();
     let playerMatrix;
     let playerField;
 
@@ -39,6 +41,7 @@
     // Ваще в тупую расстанавливаем.
     // Прям как оценки требований делаем кароче.
     function randomFill() {
+        sounds.playItsGettingBoring();
         resetGame();
         const sortedDeckCount = Array.from(playerMatrix.getShipConfig().keys()).sort().reverse();
 
@@ -117,6 +120,7 @@
                 playerMatrix.placeShip(deckCount, computedStartBlock.getX(), computedStartBlock.getY(), direction);
                 playerField.drawShip(deckCount, computedStartBlock.getX(), computedStartBlock.getY(), direction)
             } else {
+                sounds.playIDontLikeAnythingAtAll();
                 for (const block of markedBlocks) {
                     block.restore();
                 }

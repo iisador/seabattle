@@ -21,7 +21,7 @@ body {
 
 .bigTitle {
     font-family: Renju;
-    font-size: xxx-large;
+    font-size: 3vw;
 }
 
 .orange {
@@ -42,7 +42,8 @@ body {
 
 .midTitle {
     font-family: Renju;
-    font-size: xx-large;
+    font-size: 2vw;
+    text-align: center;
 }
 
 .btnReset {

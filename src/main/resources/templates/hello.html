@@ -28,11 +28,15 @@
     <link href="/fonts/fonts.css" rel="stylesheet">
     <link href="/css/common.css" rel="stylesheet">
     <link href="/css/hello.css" rel="stylesheet">
+    <script src="/js/common.js"></script>
+    <script src="/js/aud.js"></script>
 
     <title>{msg:game_title}</title>
 </head>
 <body>
 <script>
+    const sounds = new Sounds();
+
     function validate(username, password) {
         if (!username || /^\s*$/.test(username)) {
             printError('Логин некорректный');
@@ -211,6 +215,7 @@
 
     window.onload = function () {
         connect();
+        sounds.playRegattaParticipants();
     };
 </script>
 <div id="helloWrapper">
@@ -245,7 +250,7 @@
             <tbody>
             </tbody>
         </table>
-        <span style="font-size: medium;">Если не знакомы с правилами игры, почитайте <span
+        <span style="font-size: medium;display: flex;justify-content: center;">Если не знакомы с правилами игры, почитайте <span
                     style="font-style: italic;text-decoration: underline; cursor: pointer" onclick="showHelp('helpModal')"><span class="orange">справку</span>.</span></span>
     </div>
     <div id="bottomBottomWrapper">

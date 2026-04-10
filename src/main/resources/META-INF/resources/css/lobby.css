@@ -52,7 +52,7 @@ div#gameWrapper {
     display: grid;
     grid-template-rows: auto auto auto;
     grid-template-columns: auto;
-    row-gap: 35px;
+    row-gap: 60px;
     column-gap: 10px;
 }
 

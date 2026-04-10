@@ -218,12 +218,33 @@
 
             display.textContent = minutes + ":" + seconds;
 
+            if(timer === 5) {
+                sounds.playIDontUnderstandSir();
+            }
+
             if (--timer < 0) {
                 timer = 0;
                 clearInterval(intervalId);
-                sounds.playItsGettingBoring();
                 // Чтобы игра закончилась делаем выстрел. Таймер все равно вышел, остальное сделает алгоритм%)
                 sendCommand('FIRE', { x: 0, y: 0, playerName: whoami() });
+            }
+        }, 1000);
+    }
+
+    let tooLongWaiting;
+    function startWaitingTimer(duration) {
+        let timer = duration, minutes, seconds;
+        return setInterval(function () {
+            minutes = parseInt(timer / 60, 10);
+            seconds = parseInt(timer % 60, 10);
+
+            minutes = minutes < 10 ? "0" + minutes : minutes;
+            seconds = seconds < 10 ? "0" + seconds : seconds;
+
+            if (--timer < 0) {
+                timer = 0;
+                clearInterval(tooLongWaiting);
+                failWithError("Время ожидания второго игрока истекло...")
             }
         }, 1000);
     }
@@ -306,6 +327,7 @@
 
         socket = new WebSocket(url);
 
+        startWaitingTimer(1800);
         socket.onmessage = function (m) {
             const cmd = JSON.parse(m.data);
 
@@ -318,6 +340,7 @@
                     break;
                 case 'FIRE_RESULT':
                     fireResult(cmd.attacker, cmd.opponent, cmd.x, cmd.y, cmd.result, cmd.matrix, cmd.aliveShips, cmd.gameDuration);
+
                     break;
                 case 'START_GAME':
                     gameStarted(cmd.turn, cmd.player1, cmd.player2);
@@ -392,7 +415,7 @@
             <div id="myField"></div>
 
             <div id="timer">
-                <span class="midTitle">До конца игры:</span>
+                <span class="midTitle" style="padding-bottom: 15px">До конца игры:</span>
                 <span id="countdown" class="bigTitle orange"><span class="orange">00:00</span></span>
             </div>
             <div id="enemyFieldTitle">

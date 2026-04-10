@@ -20,8 +20,11 @@
     <script src="/js/game.js"></script>
     <script src="/js/field.js"></script>
     <script src="/js/common.js"></script>
+    <script src="/js/aud.js"></script>
+
 </head>
 <script>
+    const sounds = new Sounds();
     let playerMatrix;
     let playerField;
 
@@ -34,14 +37,17 @@
 
     function fillRow(row, gameId, createTime, gameType, players, gameStatus) {
         const timeCell = row.insertCell();
+        timeCell.style = "text-align: center;"
         timeCell.appendChild(document.createTextNode(createTime));
         row.appendChild(timeCell);
 
         const typeCell = row.insertCell();
+        typeCell.style = "text-align: center;"
         typeCell.appendChild(document.createTextNode(gameType));
         row.appendChild(typeCell);
 
         const playersCell = row.insertCell();
+        playersCell.style = "text-align: center;"
         playersCell.appendChild(document.createTextNode(players));
         row.appendChild(playersCell);
 
@@ -157,6 +163,7 @@
     // Ваще в тупую расстанавливаем.
     // Прям как оценки требований делаем кароче.
     function randomFill() {
+        sounds.playItsGettingBoring();
         resetGame();
 
         if (document.getElementById('gameConf').value === 'd3bcaefb-a319-4264-894a-725e98449c97') {
@@ -249,6 +256,7 @@
                     playerMatrix.placeShip(deckCount, computedStartBlock.getX(), computedStartBlock.getY(), direction);
                     playerField.drawShip(deckCount, computedStartBlock.getX(), computedStartBlock.getY(), direction)
                 } else {
+                    sounds.playIDontLikeAnythingAtAll();
                     for (const block of markedBlocks) {
                         block.restore();
                     }
@@ -258,6 +266,7 @@
                     playerMatrix.placeShip(deckCount, computedStartBlock.getX(), computedStartBlock.getY(), direction);
                     playerField.drawShip(deckCount, computedStartBlock.getX(), computedStartBlock.getY(), direction)
                 } else {
+                    sounds.playIDontLikeAnythingAtAll();
                     for (const block of markedBlocks) {
                         block.restore();
                     }
@@ -282,6 +291,9 @@
     }, false);
 
     function showHelp(e) {
+        if(e === 'helpModal') {
+            sounds.playWhereIsTheMap();
+        }
         document.getElementById('gameWrapper').style.filter = 'grayscale(1)';
         document.getElementById(e).style.display = 'flex';
         document.getElementById(e).style.visibility = 'visible';
@@ -339,7 +351,6 @@
 
     window.onload = function () {
         connect();
-
         // Установка настроек игры по умолчанию
         const sGameConf = document.getElementById('gameConf');
         sGameConf.value = sGameConf.firstElementChild.value;
@@ -350,7 +361,7 @@
 <body>
 <div id="lobbyWrapper">
     <div id="headerWrapper">
-        <img src="/img/octopussy.png" style="width: 218px; height: 254px">
+        <img src="/img/octopussy.png">
     </div>
     <div id="logoCr">
         <img src="/img/anchor.png">
@@ -414,7 +425,7 @@
             </div>
             <div id="newGameWrapper">
                 <div id="gameConfig">
-                    <div id="gameConfigTitle"><span class="midTitle"><span class="orange">Н</span>ачать новую игру</span></div>
+                    <div id="gameConfigTitle"><span class="midTitle"><span class="orange">С</span>оздай игру и жди,<br/><br/>пока к ней кто-то присоединится или...</span></div>
                     <div id="gameTypeLabel"><label for="gameConf">Место битвы</label></div>
                     <div id="gameTypeConf"><select id="gameConf" name="conf" onchange="resetGame()">
                             {#each gameConfigList}
@@ -441,7 +452,7 @@
                 </div>
             </div>
             <div id="waitingGamesWrapper">
-                <span class="midTitle"><span class="orange">Т</span>екущие игры</span>
+                <span class="midTitle"><span class="orange">П</span>рисоединись к текущей игре<br/><br/>и стремись к победе!</span>
                 <table id="gamesTable" style="width: 100%">
                     <thead>
                     <tr>
@@ -456,7 +467,7 @@
                     </tbody>
                 </table>
             </div>
-            <span style="font-size: medium;">Если не знакомы с правилами игры, почитайте <span
+            <span style="font-size: medium;display: flex;justify-content: center;">Если не знакомы с правилами игры, почитайте <span
                         style="font-style: italic;text-decoration: underline; cursor: pointer" onclick="showHelp('helpModal')"><span class="orange">справку</span>.</span></span>
         </div>
     </div>

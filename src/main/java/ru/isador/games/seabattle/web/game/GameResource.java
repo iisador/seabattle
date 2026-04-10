@@ -92,7 +92,7 @@ public class GameResource {
     @Path("/{id}/view")
     @PermitAll
     public TemplateInstance viewGame(@Context SecurityContext securityContext, @PathParam("id") UUID id) {
-        return viewGame.data("viewerName", securityContext.getUserPrincipal() != null ? securityContext.getUserPrincipal().getName() : "Anonymous")
+        return viewGame.data("viewerName", securityContext.getUserPrincipal() != null ? securityContext.getUserPrincipal().getName() : "Зритель")
                        .data("gameId", id);
     }
 
