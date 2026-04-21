@@ -83,7 +83,8 @@ CREATE TABLE players
 	game_id uuid NOT NULL,
 	player_name varchar(50) NOT NULL,
 	field varchar(2048) NOT NULL,	-- Заполненное поле
-	winner boolean NULL
+	winner boolean NULL,
+    du TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 )
 ;
 
