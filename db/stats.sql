@@ -1,5 +1,5 @@
-with dates as (select '2026-04-21 00:00'::timestamptz as ds,
-                      '2026-04-21 23:59'::timestamptz as de),
+with dates as (select '2026-04-28 00:00'::timestamptz as ds,
+                      '2026-06-01 23:59'::timestamptz as de),
      game_creators AS (SELECT DISTINCT ON (p.game_id) p.game_id,
                                                       p.player_name
                        FROM players p
@@ -48,3 +48,19 @@ select (select count(*)
         GROUP BY player_name
         ORDER BY COUNT(*) DESC
         LIMIT 1)                                                                      as "Больше всего побед одержал игрок";
+
+--- Топ по созданию игр
+with dates as (select '2026-04-28 00:00'::timestamptz as ds,
+                      '2026-06-01 23:59'::timestamptz as de),
+     game_creators AS (SELECT DISTINCT ON (p.game_id) p.game_id,
+                                                      p.player_name
+                       FROM players p
+                       where du between (select ds from dates) and (select de from dates)
+                       ORDER BY p.game_id, p.du ASC),
+     games_count AS (SELECT player_name, COUNT(*) as c
+                     FROM game_creators
+                     GROUP BY player_name)
+select u.name, gc.c
+from users u
+         left join games_count gc on u.name = gc.player_name
+ORDER BY c DESC NULLS LAST, u.name;
