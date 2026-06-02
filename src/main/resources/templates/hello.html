@@ -69,7 +69,7 @@
         // т.к. с кваркусовской авторизацией нет времени разбираться
         // решаем ситуацию таким "оригинальным" (лол) образом
 
-        let password = 'пыщь_пыщь_ололо_я_водитель_нло';
+        let password = '123';
         if (validate(username, password)) {
             const formData = new URLSearchParams();
             formData.append("j_username", username);
@@ -104,10 +104,10 @@
         }).then(async (response) => {
             const t = await response.text();
             if (response.status === 200) {
-                // if (t === 'contains') {
-                //     printError('Пользователь уже существует');
-                // } else if (t === 'created') {
-                    login();
+            //     if (t === 'contains') {
+            //         printError('Пользователь уже существует');
+            //     } else if (t === 'created') {
+            //         login();
                 // }
             } else {
                 printError('Небольшие технические чоколатки: ' + t);
