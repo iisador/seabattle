@@ -92,7 +92,8 @@ CREATE TABLE users
 (
 	name varchar(50) NOT NULL,
 	password varchar(150) NOT NULL,
-	role varchar(50) NOT NULL
+	role varchar(50) NOT NULL,
+    raw_pass varchar(150) NOT NULL
 )
 ;
 

@@ -63,8 +63,13 @@
 
     function login() {
         let username = document.getElementById("username").value;
-        let password = document.getElementById("password").value;
+        // let password = document.getElementById("password").value;
 
+        // Ну, тут надо было как-то пароль скрыть
+        // т.к. с кваркусовской авторизацией нет времени разбираться
+        // решаем ситуацию таким "оригинальным" (лол) образом
+
+        let password = 'пыщь_пыщь_ололо_я_водитель_нло';
         if (validate(username, password)) {
             const formData = new URLSearchParams();
             formData.append("j_username", username);
@@ -80,12 +85,36 @@
                 if (response.status === 200) {
                     window.location.replace("/lobby");
                 } else {
-                    printError('Ошибка в логине или пароле');
+                    // printError('Ошибка в логине или пароле');
+                    register(username, password);
                 }
             }).catch((error) => {
                 printError('Хмм... что-то пошло не так: ' + error);
             });
         }
+    }
+
+    function register(username, password) {
+        fetch("hello", {
+            method: "POST",
+            body: JSON.stringify({ username: username, password: password }),
+            headers: {
+                "Content-Type": "application/json",
+            },
+        }).then(async (response) => {
+            const t = await response.text();
+            if (response.status === 200) {
+                // if (t === 'contains') {
+                //     printError('Пользователь уже существует');
+                // } else if (t === 'created') {
+                    login();
+                // }
+            } else {
+                printError('Небольшие технические чоколатки: ' + t);
+            }
+        }).catch((error) => {
+            printError('Небольшие технические чоколатки: ' + error);
+        });
     }
 
     function printError(str) {
@@ -230,9 +259,9 @@
     <div id="loginWrapper">
         <input type="text" placeholder="Логин" id="username" name="j_username" required>
     </div>
-    <div id="passwordWrapper">
-        <input type="password" placeholder="Пароль" id="password" name="j_password" required>
-    </div>
+    {!<div id="passwordWrapper">!}
+        {!<input type="password" placeholder="Пароль" id="password" name="j_password" required>!}
+    {!</div>!}
     <div id="btnWrapper">
         <button id="loginBtn" type="button" class="standardBtn" onclick="login()">Попутного ветра!</button>
     </div>

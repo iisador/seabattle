@@ -171,18 +171,6 @@ class Matrix {
         return true;
     }
 
-    fakeCanPlaceShip(deckCount, x, y, direction) {
-        // Проверка выхода за границы
-        if (!this.pointInMatrix(x, y)) {
-            return false;
-        }
-        if ((direction === 'vertical') && !this.pointInMatrix(x + deckCount - 1, y)) {
-            return false;
-        }
-
-        return !((direction === 'horizontal') && !this.pointInMatrix(x, y + deckCount - 1));
-    }
-
     hasCornerCollision(x, y) {
         return (this.pointInMatrix(x + 1, y + 1) && this.#matrix[x + 1][y + 1] !== 0)
             || (this.pointInMatrix(x + 1, y - 1) && this.#matrix[x + 1][y - 1] !== 0)

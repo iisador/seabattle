@@ -166,18 +166,6 @@
         sounds.playItsGettingBoring();
         resetGame();
 
-        if (document.getElementById('gameConf').value === 'd3bcaefb-a319-4264-894a-725e98449c97') {
-            const direction = random(2) ? 'horizontal' : 'vertical';
-            const x = random(playerMatrix.getSize());
-            const y = random(playerMatrix.getSize());
-            if (playerMatrix.canPlaceShip(1, x, y, direction)) {
-                playerMatrix.placeShip(1, x, y, direction);
-                playerField.drawShip(1, x, y, direction);
-            }
-
-            return;
-        }
-
         const sortedDeckCount = Array.from(playerMatrix.getShipConfig().keys()).sort().reverse();
 
         let resetCount = 1989;
@@ -251,28 +239,15 @@
             const deckCount = endBlock.getLength(startBlock);
             const direction = endBlock.isOneRow(startBlock) ? 'horizontal' : 'vertical';
             const computedStartBlock = endBlock.getStartBlock(startBlock);
-            if(document.getElementById('gameConf').value === '60d86085-2200-47d7-a2a7-eba88cbdd237') {
-                if (playerMatrix.fakeCanPlaceShip(deckCount, computedStartBlock.getX(), computedStartBlock.getY(), direction)) {
-                    playerMatrix.placeShip(deckCount, computedStartBlock.getX(), computedStartBlock.getY(), direction);
-                    playerField.drawShip(deckCount, computedStartBlock.getX(), computedStartBlock.getY(), direction)
-                } else {
-                    sounds.playIDontLikeAnythingAtAll();
-                    for (const block of markedBlocks) {
-                        block.restore();
-                    }
-                }
+            if (playerMatrix.canPlaceShip(deckCount, computedStartBlock.getX(), computedStartBlock.getY(), direction)) {
+                playerMatrix.placeShip(deckCount, computedStartBlock.getX(), computedStartBlock.getY(), direction);
+                playerField.drawShip(deckCount, computedStartBlock.getX(), computedStartBlock.getY(), direction)
             } else {
-                if (playerMatrix.canPlaceShip(deckCount, computedStartBlock.getX(), computedStartBlock.getY(), direction)) {
-                    playerMatrix.placeShip(deckCount, computedStartBlock.getX(), computedStartBlock.getY(), direction);
-                    playerField.drawShip(deckCount, computedStartBlock.getX(), computedStartBlock.getY(), direction)
-                } else {
-                    sounds.playIDontLikeAnythingAtAll();
-                    for (const block of markedBlocks) {
-                        block.restore();
-                    }
+                sounds.playIDontLikeAnythingAtAll();
+                for (const block of markedBlocks) {
+                    block.restore();
                 }
             }
-
 
             markedBlocks = [];
         } else {
